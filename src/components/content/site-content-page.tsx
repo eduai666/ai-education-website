@@ -1,0 +1,57 @@
+import Link from "next/link";
+import { DocumentationShell } from "@/components/layout/documentation-shell";
+import { getSiblingPages, type SitePageEntry } from "@/server/content/site-pages";
+
+type SiteContentPageProps = {
+  page: SitePageEntry;
+};
+
+export function SiteContentPage({ page }: SiteContentPageProps) {
+  const Content = page.Content;
+  const { previous, next } = getSiblingPages(page);
+  const groupHref = page.collection === "about" ? "/" : "/guides/ai-learning";
+
+  return (
+    <DocumentationShell
+      activePath={page.path}
+      breadcrumbs={[
+        { label: "首页", href: "/" },
+        { label: page.groupLabel, href: groupHref },
+        { label: page.navigationLabel },
+      ]}
+      sections={page.sections}
+    >
+      <article className="article-content content-document-page">
+        <div className="content-document-meta" aria-label="页面信息">
+          <span>{page.groupLabel}</span>
+          <span>{page.readingTime}</span>
+          <span>内容持续更新</span>
+        </div>
+
+        <div className="markdown-document">
+          <Content />
+        </div>
+
+        <nav className="content-pagination" aria-label="同类内容前后导航">
+          {previous ? (
+            <Link href={previous.path} className="content-pagination-previous">
+              <span>上一篇</span>
+              <strong>{previous.navigationLabel}</strong>
+            </Link>
+          ) : <span className="content-pagination-spacer" />}
+          {next ? (
+            <Link href={next.path} className="content-pagination-next">
+              <span>下一篇</span>
+              <strong>{next.navigationLabel}</strong>
+            </Link>
+          ) : (
+            <Link href="/courses/ai-basics/what-is-ai" className="content-pagination-next">
+              <span>继续学习</span>
+              <strong>认识人工智能</strong>
+            </Link>
+          )}
+        </nav>
+      </article>
+    </DocumentationShell>
+  );
+}

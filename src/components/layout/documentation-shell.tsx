@@ -33,7 +33,7 @@ export function DocumentationShell({
 
         <div className="topbar-actions">
           <span className="stage-badge">持续共创中</span>
-          <Link className="feedback-link" href="/#next-step">反馈建议</Link>
+          <Link className="feedback-link" href="/about/vision">项目愿景</Link>
         </div>
 
         <details className="mobile-navigation">
@@ -47,7 +47,7 @@ export function DocumentationShell({
       <div className="documentation-layout">
         <aside className="left-sidebar">
           <div className="sidebar-heading">
-            <span className="sidebar-kicker">课程与项目</span>
+            <span className="sidebar-kicker">内容与课程</span>
             <h1>网站导航</h1>
           </div>
           <SiteNavigation activePath={activePath} />
