@@ -1,24 +1,28 @@
 This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
-## Getting Started
+## 本地启动
 
-First, run the development server:
+进入项目目录并安装依赖：
+
+```bash
+cd ~/ai-education-website
+npm install --package-lock=false
+```
+
+启动开发服务器：
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+终端显示服务已就绪后，可以在浏览器中访问：
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+- 首页：[http://localhost:3000](http://localhost:3000)
+- 课程页：[http://localhost:3000/courses/ai-basics/what-is-ai](http://localhost:3000/courses/ai-basics/what-is-ai)
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+开发模式支持热更新，修改源码后页面会自动刷新。结束预览时，在运行开发服务器的终端中按 `Ctrl+C`。
+
+安装依赖时可能出现可选 WASM 依赖的 peer dependency 警告；只要安装最终显示成功，就不影响本地预览。不要直接运行 `npm audit fix --force`，因为它可能引入破坏性依赖升级。
 
 ## Learn More
 
