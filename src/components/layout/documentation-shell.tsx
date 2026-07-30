@@ -25,31 +25,32 @@ export function DocumentationShell({
     <div className="page-shell">
       <header className="topbar">
         <Link className="brand" href="/" aria-label="返回网站首页">
-          <span className="brand-mark" aria-hidden="true">智</span>
           <span className="brand-name">AI 基础教育</span>
-          <span className="brand-divider" aria-hidden="true" />
           <span className="brand-subtitle">公益学习平台</span>
         </Link>
 
         <div className="topbar-actions">
-          <span className="stage-badge">持续共创中</span>
           <Link className="feedback-link" href="/about/vision">项目愿景</Link>
         </div>
 
         <details className="mobile-navigation">
-          <summary>网站导航</summary>
+          <summary>
+            <span className="mobile-navigation-label-tablet">本页目录</span>
+            <span className="mobile-navigation-label-phone">目录与导航</span>
+          </summary>
           <div className="mobile-navigation-panel">
             <SiteNavigation activePath={activePath} />
+            {sections.length ? (
+              <div className="mobile-on-this-page">
+                <OnThisPage sections={sections} />
+              </div>
+            ) : null}
           </div>
         </details>
       </header>
 
       <div className="documentation-layout">
         <aside className="left-sidebar">
-          <div className="sidebar-heading">
-            <span className="sidebar-kicker">内容与课程</span>
-            <h1>网站导航</h1>
-          </div>
           <SiteNavigation activePath={activePath} />
         </aside>
 

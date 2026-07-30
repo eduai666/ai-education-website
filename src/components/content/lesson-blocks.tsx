@@ -8,11 +8,7 @@ export function LearningGoals({ items }: LearningGoalsProps) {
   return (
     <div className="learning-goals">
       <div className="learning-goals-heading">
-        <span aria-hidden="true">✓</span>
-        <div>
-          <p>完成本课后，你将能够</p>
-          <strong>用自己的话解释人工智能</strong>
-        </div>
+        <p>完成本课后，你将能够</p>
       </div>
       <ul>
         {items.map((item) => <li key={item}>{item}</li>)}

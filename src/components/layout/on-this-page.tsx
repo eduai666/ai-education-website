@@ -48,12 +48,9 @@ export function OnThisPage({ sections }: OnThisPageProps) {
 
   return (
     <nav aria-label="本页导航">
-      <p className="on-page-title">
-        <span aria-hidden="true">≡</span>
-        本页导航
-      </p>
+      <p className="on-page-title">本页导航</p>
       <ol>
-        {sections.map((section, index) => (
+        {sections.map((section) => (
           <li key={section.id}>
             <a
               className={activeId === section.id ? "is-active" : undefined}
@@ -61,7 +58,6 @@ export function OnThisPage({ sections }: OnThisPageProps) {
               aria-current={activeId === section.id ? "location" : undefined}
               onClick={() => setActiveId(section.id)}
             >
-              <span>{String(index + 1).padStart(2, "0")}</span>
               {section.label}
             </a>
           </li>

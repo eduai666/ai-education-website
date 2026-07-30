@@ -45,10 +45,6 @@ export function QuickQuiz() {
 
   return (
     <div className="quick-quiz">
-      <div className="quiz-heading">
-        <span>3 题自测</span>
-        <h3>看看你是否抓住了关键概念</h3>
-      </div>
       {questions.map((question, questionIndex) => {
         const selected = answers[questionIndex];
         const hasAnswer = selected !== undefined;

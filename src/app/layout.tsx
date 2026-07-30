@@ -1,5 +1,14 @@
 import type { Metadata } from "next";
+import { Noto_Sans_SC } from "next/font/google";
 import "./globals.css";
+import "./editorial.css";
+
+const notoSans = Noto_Sans_SC({
+  weight: "variable",
+  display: "swap",
+  preload: false,
+  variable: "--font-sans",
+});
 
 export const metadata: Metadata = {
   title: "AI 基础教育公益网站",
@@ -12,7 +21,11 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="zh-CN">
+    <html
+      lang="zh-CN"
+      className={notoSans.variable}
+      data-scroll-behavior="smooth"
+    >
       <body>{children}</body>
     </html>
   );
