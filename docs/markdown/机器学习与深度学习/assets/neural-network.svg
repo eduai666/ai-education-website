@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="720" viewBox="0 0 1280 720" role="img" aria-labelledby="title desc">
+  <title id="title">多层神经网络的信息流</title>
+  <desc id="desc">输入层接收信息，隐藏层逐层组合特征，输出层给出预测。</desc>
+  <defs><linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#F7FAFF"/><stop offset="1" stop-color="#F5FBF8"/></linearGradient><filter id="s"><feDropShadow dx="0" dy="7" stdDeviation="8" flood-opacity=".12"/></filter><marker id="a" markerWidth="10" markerHeight="10" refX="9" refY="5" orient="auto"><path d="M0 0L10 5 0 10Z" fill="#718096"/></marker></defs>
+  <rect width="1280" height="720" rx="32" fill="url(#bg)"/>
+  <text x="64" y="78" font-family="Microsoft YaHei, sans-serif" font-size="34" font-weight="700" fill="#17233C">神经网络：许多简单变换组成一个可调节的复杂函数</text>
+  <g font-family="Microsoft YaHei, sans-serif" text-anchor="middle">
+    <text x="152" y="160" font-size="24" font-weight="700" fill="#2B6CB0">输入层</text><text x="152" y="190" font-size="17" fill="#64748B">接收原始信息</text>
+    <text x="430" y="160" font-size="24" font-weight="700" fill="#0F8A70">隐藏层 1</text><text x="430" y="190" font-size="17" fill="#64748B">寻找简单组合</text>
+    <text x="690" y="160" font-size="24" font-weight="700" fill="#0F8A70">隐藏层 2</text><text x="690" y="190" font-size="17" fill="#64748B">形成更抽象表示</text>
+    <text x="960" y="160" font-size="24" font-weight="700" fill="#7048B8">输出层</text><text x="960" y="190" font-size="17" fill="#64748B">给出类别概率</text>
+  </g>
+  <g stroke="#B7C5D6" stroke-width="2" opacity=".78">
+    <path d="M174 268L408 248M174 268L408 348M174 268L408 448M174 368L408 248M174 368L408 348M174 368L408 448M174 468L408 248M174 468L408 348M174 468L408 448"/>
+    <path d="M452 248L668 238M452 248L668 338M452 248L668 438M452 248L668 538M452 348L668 238M452 348L668 338M452 348L668 438M452 348L668 538M452 448L668 238M452 448L668 338M452 448L668 438M452 448L668 538"/>
+    <path d="M712 238L938 318M712 238L938 438M712 338L938 318M712 338L938 438M712 438L938 318M712 438L938 438M712 538L938 318M712 538L938 438"/>
+  </g>
+  <g filter="url(#s)" stroke-width="4">
+    <g fill="#E5F1FF" stroke="#3B82C4"><circle cx="152" cy="268" r="30"/><circle cx="152" cy="368" r="30"/><circle cx="152" cy="468" r="30"/></g>
+    <g fill="#DFF7EE" stroke="#16A085"><circle cx="430" cy="248" r="30"/><circle cx="430" cy="348" r="30"/><circle cx="430" cy="448" r="30"/><circle cx="690" cy="238" r="30"/><circle cx="690" cy="338" r="30"/><circle cx="690" cy="438" r="30"/><circle cx="690" cy="538" r="30"/></g>
+    <g fill="#F0E8FF" stroke="#805AD5"><circle cx="960" cy="318" r="34"/><circle cx="960" cy="438" r="34"/></g>
+  </g>
+  <g font-family="Microsoft YaHei, sans-serif" font-size="19" fill="#334155"><text x="70" y="275">特征 1</text><text x="70" y="375">特征 2</text><text x="70" y="475">特征 3</text><text x="1025" y="325">类别 A</text><text x="1025" y="445">类别 B</text></g>
+  <rect x="250" y="588" width="780" height="72" rx="20" fill="#FFFFFF" stroke="#D7E0EA"/>
+  <text x="640" y="619" text-anchor="middle" font-family="Consolas, monospace" font-size="24" font-weight="700" fill="#20304A">a = φ(w₁x₁ + w₂x₂ + … + b)</text>
+  <text x="640" y="649" text-anchor="middle" font-family="Microsoft YaHei, sans-serif" font-size="17" fill="#64748B">权重决定信息影响，偏置调整起点，激活函数加入非线性</text>
+  <path d="M1082 378h92" stroke="#718096" stroke-width="4" marker-end="url(#a)"/><text x="1140" y="354" text-anchor="middle" font-family="Microsoft YaHei, sans-serif" font-size="17" fill="#64748B">预测</text>
+</svg>

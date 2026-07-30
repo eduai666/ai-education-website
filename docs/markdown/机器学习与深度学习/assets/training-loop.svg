@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="720" viewBox="0 0 1280 720" role="img" aria-labelledby="title desc">
+  <title id="title">神经网络训练循环</title><desc id="desc">前向传播、计算损失、反向传播和更新参数组成重复训练循环。</desc>
+  <defs><linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#F8FAFC"/><stop offset="1" stop-color="#EFF8F5"/></linearGradient><marker id="arrow" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto"><path d="M0 0L12 6 0 12Z" fill="#4B647A"/></marker><filter id="s"><feDropShadow dx="0" dy="10" stdDeviation="12" flood-color="#17324D" flood-opacity=".12"/></filter></defs>
+  <rect width="1280" height="720" rx="32" fill="url(#bg)"/>
+  <text x="64" y="82" font-family="Microsoft YaHei, sans-serif" font-size="34" font-weight="700" fill="#14213D">训练循环：预测、发现错误、追踪责任、调整参数</text>
+  <g fill="none" stroke="#4B647A" stroke-width="5" stroke-linecap="round" marker-end="url(#arrow)"><path d="M370 237C480 150 800 150 910 237"/><path d="M1007 348C1052 435 946 548 827 567"/><path d="M702 582C562 622 375 563 307 472"/><path d="M266 352C254 316 278 276 315 251"/></g>
+  <g filter="url(#s)" font-family="Microsoft YaHei, sans-serif">
+    <g transform="translate(150 180)"><rect width="250" height="150" rx="26" fill="#FFFFFF" stroke="#CFE0F3" stroke-width="3"/><circle cx="58" cy="59" r="28" fill="#E5F1FF"/><path d="M44 59h28M58 45v28" stroke="#2B70B8" stroke-width="4"/><text x="102" y="58" font-size="24" font-weight="700" fill="#20304A">1  前向传播</text><text x="32" y="111" font-size="18" fill="#64748B">输入数据，得到一次预测</text></g>
+    <g transform="translate(880 180)"><rect width="250" height="150" rx="26" fill="#FFFFFF" stroke="#F1D6B1" stroke-width="3"/><circle cx="58" cy="59" r="28" fill="#FFF2DE"/><path d="M45 47l26 26M71 47L45 73" stroke="#D57922" stroke-width="4"/><text x="102" y="58" font-size="24" font-weight="700" fill="#20304A">2  计算损失</text><text x="32" y="111" font-size="18" fill="#64748B">把“错多少”变成一个数值</text></g>
+    <g transform="translate(790 472)"><rect width="300" height="150" rx="26" fill="#FFFFFF" stroke="#DCCFF3" stroke-width="3"/><circle cx="58" cy="59" r="28" fill="#F0E8FF"/><path d="M70 45c-20 0-26 12-26 25M44 70l-7-10M44 70l11-5" fill="none" stroke="#7651B5" stroke-width="4" stroke-linecap="round"/><text x="102" y="58" font-size="24" font-weight="700" fill="#20304A">3  反向传播</text><text x="32" y="111" font-size="18" fill="#64748B">计算各参数对误差的影响</text></g>
+    <g transform="translate(190 472)"><rect width="300" height="150" rx="26" fill="#FFFFFF" stroke="#C6E7DB" stroke-width="3"/><circle cx="58" cy="59" r="28" fill="#DFF7EE"/><path d="M44 64l10 10 20-29" fill="none" stroke="#0F9D75" stroke-width="4" stroke-linecap="round"/><text x="102" y="58" font-size="24" font-weight="700" fill="#20304A">4  更新参数</text><text x="32" y="111" font-size="18" fill="#64748B">沿降低损失的方向迈一步</text></g>
+  </g>
+  <circle cx="640" cy="365" r="124" fill="#173B53"/>
+  <text x="640" y="344" text-anchor="middle" font-family="Microsoft YaHei, sans-serif" font-size="29" font-weight="700" fill="#FFFFFF">重复许多批次</text>
+  <text x="640" y="386" text-anchor="middle" font-family="Microsoft YaHei, sans-serif" font-size="20" fill="#CDE6F2">直到验证集表现不再改善</text>
+  <text x="640" y="422" text-anchor="middle" font-family="Microsoft YaHei, sans-serif" font-size="18" fill="#AFCFDC">学习率决定每一步走多远</text>
+</svg>

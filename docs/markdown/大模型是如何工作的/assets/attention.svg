@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="720" viewBox="0 0 1280 720" role="img" aria-labelledby="title desc">
+  <title id="title">自注意力中的Query、Key和Value</title><desc id="desc">当前token用Query与其他token的Key匹配，再按匹配分数汇总Value。</desc>
+  <defs><linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#F8FAFF"/><stop offset="1" stop-color="#F5F9F8"/></linearGradient><filter id="s"><feDropShadow dx="0" dy="10" stdDeviation="12" flood-opacity=".1"/></filter><marker id="a" markerWidth="10" markerHeight="10" refX="9" refY="5" orient="auto"><path d="M0 0L10 5 0 10Z" fill="#64748B"/></marker></defs>
+  <rect width="1280" height="720" rx="32" fill="url(#bg)"/>
+  <text x="64" y="82" font-family="Microsoft YaHei, sans-serif" font-size="34" font-weight="700" fill="#14213D">自注意力：处理一个位置时，按需要从其他位置取信息</text>
+  <text x="64" y="121" font-family="Microsoft YaHei, sans-serif" font-size="19" fill="#64748B">示例：“小林把雨伞借给小周，因为外面正在下雨。” 当前关注“雨伞”。</text>
+  <g font-family="Microsoft YaHei, sans-serif" text-anchor="middle" filter="url(#s)">
+    <g transform="translate(72 194)"><rect width="178" height="88" rx="18" fill="#FFFFFF" stroke="#D8E1EB"/><text x="89" y="55" font-size="24" fill="#334155">小林</text></g>
+    <g transform="translate(264 194)"><rect width="178" height="88" rx="18" fill="#FFFFFF" stroke="#C9E3F4" stroke-width="3"/><text x="89" y="55" font-size="24" font-weight="700" fill="#2872A7">雨伞</text></g>
+    <g transform="translate(456 194)"><rect width="178" height="88" rx="18" fill="#FFFFFF" stroke="#D8E1EB"/><text x="89" y="55" font-size="24" fill="#334155">借给</text></g>
+    <g transform="translate(648 194)"><rect width="178" height="88" rx="18" fill="#FFFFFF" stroke="#D8E1EB"/><text x="89" y="55" font-size="24" fill="#334155">小周</text></g>
+    <g transform="translate(840 194)"><rect width="178" height="88" rx="18" fill="#FFFFFF" stroke="#D8E1EB"/><text x="89" y="55" font-size="24" fill="#334155">外面</text></g>
+    <g transform="translate(1032 194)"><rect width="178" height="88" rx="18" fill="#FFFFFF" stroke="#D8E1EB"/><text x="89" y="55" font-size="24" fill="#334155">下雨</text></g>
+  </g>
+  <g fill="none" stroke-linecap="round"><path d="M353 282C274 340 211 350 161 309" stroke="#A8B6C5" stroke-width="4"/><path d="M353 282C421 339 488 350 545 309" stroke="#3B82C4" stroke-width="10"/><path d="M353 282C490 392 670 384 737 309" stroke="#6D7FD2" stroke-width="8"/><path d="M353 282C551 439 849 407 929 309" stroke="#A8B6C5" stroke-width="4"/><path d="M353 282C650 474 1040 421 1121 309" stroke="#16A085" stroke-width="9"/></g>
+  <g font-family="Microsoft YaHei, sans-serif" filter="url(#s)">
+    <g transform="translate(98 446)"><rect width="305" height="148" rx="24" fill="#FFFFFF" stroke="#D5DDF5" stroke-width="2"/><circle cx="55" cy="54" r="27" fill="#E9EEFF"/><text x="55" y="63" text-anchor="middle" font-size="23" font-weight="700" fill="#4F67D8">Q</text><text x="96" y="51" font-size="24" font-weight="700" fill="#334155">Query 查询</text><text x="32" y="102" font-size="18" fill="#64748B">当前位置需要寻找什么？</text></g>
+    <g transform="translate(487 446)"><rect width="305" height="148" rx="24" fill="#FFFFFF" stroke="#CDE7DE" stroke-width="2"/><circle cx="55" cy="54" r="27" fill="#E4F7F0"/><text x="55" y="63" text-anchor="middle" font-size="23" font-weight="700" fill="#0F8A70">K</text><text x="96" y="51" font-size="24" font-weight="700" fill="#334155">Key 键</text><text x="32" y="102" font-size="18" fill="#64748B">我与这次查询有多匹配？</text></g>
+    <g transform="translate(876 446)"><rect width="305" height="148" rx="24" fill="#FFFFFF" stroke="#F0D8B7" stroke-width="2"/><circle cx="55" cy="54" r="27" fill="#FFF3E2"/><text x="55" y="63" text-anchor="middle" font-size="23" font-weight="700" fill="#C46A18">V</text><text x="96" y="51" font-size="24" font-weight="700" fill="#334155">Value 值</text><text x="32" y="102" font-size="18" fill="#64748B">如果被关注，我提供什么信息？</text></g>
+  </g>
+  <path d="M403 520h69M792 520h69" stroke="#64748B" stroke-width="4" marker-end="url(#a)"/>
+  <text x="640" y="660" text-anchor="middle" font-family="Microsoft YaHei, sans-serif" font-size="19" fill="#526274">线越粗表示示意性的注意力权重越高；真实模型中，每层、每个注意力头都会重新计算。</text>
+</svg>
