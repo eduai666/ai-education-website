@@ -76,7 +76,6 @@ export function AiClassificationLab() {
     <div className="classification-lab">
       <div className="lab-heading">
         <div>
-          <span className="lab-kicker">互动分类卡</span>
           <h3>它属于人工智能、自动化，还是普通程序？</h3>
           <p>先阅读场景，再选择你的判断。答错也没关系，解释比得分更重要。</p>
         </div>

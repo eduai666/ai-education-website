@@ -1,5 +1,5 @@
 import { DocumentationShell } from "@/components/layout/documentation-shell";
-import { courseLessons, getLesson } from "@/server/content/courses";
+import { courseLessons, getAdjacentLessons, getLesson } from "@/server/content/courses";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
@@ -37,6 +37,8 @@ export default async function LessonPage({ params }: LessonPageProps) {
 
   const LessonContent = lesson.Content;
   const activePath = `/courses/${lesson.chapter}/${lesson.slug}`;
+  const { previous, next } = getAdjacentLessons(lesson);
+  const isMarkdownLesson = lesson.contentKind === "markdown";
 
   return (
     <DocumentationShell
@@ -52,30 +54,43 @@ export default async function LessonPage({ params }: LessonPageProps) {
         <header className="lesson-header">
           <div className="lesson-label-row">
             <span className="lesson-label">{lesson.chapterLabel}</span>
-            <span className="lesson-status"><i aria-hidden="true" />课程已上线</span>
           </div>
           <h1>{lesson.title}</h1>
           <p>{lesson.description}</p>
           <div className="lesson-meta" aria-label="课程信息">
-            <span><b aria-hidden="true">龄</b>{lesson.audience}</span>
-            <span><b aria-hidden="true">时</b>{lesson.readingTime}</span>
-            <span><b aria-hidden="true">练</b>包含互动与自测</span>
+            <span>{lesson.audience}</span>
+            <span>{lesson.readingTime}</span>
+            <span>{isMarkdownLesson ? "图文课程" : "包含互动与自测"}</span>
           </div>
         </header>
 
-        <div className="lesson-prose">
+        <div className={isMarkdownLesson ? "lesson-prose markdown-document course-markdown-document" : "lesson-prose"}>
           <LessonContent />
         </div>
 
         <nav className="lesson-pagination" aria-label="课程前后导航">
-          <Link href="/" className="lesson-pagination-home">
-            <span>返回</span>
-            <strong>课程首页</strong>
-          </Link>
-          <span className="lesson-pagination-next is-disabled" aria-disabled="true">
-            <span>下一课 · 即将推出</span>
-            <strong>机器学习与深度学习</strong>
-          </span>
+          {previous ? (
+            <Link href={`/courses/${previous.chapter}/${previous.slug}`} className="lesson-pagination-home">
+              <span>上一课</span>
+              <strong>{previous.title}</strong>
+            </Link>
+          ) : (
+            <Link href="/" className="lesson-pagination-home">
+              <span>返回</span>
+              <strong>课程首页</strong>
+            </Link>
+          )}
+          {next ? (
+            <Link href={`/courses/${next.chapter}/${next.slug}`} className="lesson-pagination-next">
+              <span>下一课</span>
+              <strong>{next.title}</strong>
+            </Link>
+          ) : (
+            <span className="lesson-pagination-next is-disabled" aria-disabled="true">
+              <span>本轮学习完成</span>
+              <strong>回到课程首页继续探索</strong>
+            </span>
+          )}
         </nav>
       </article>
     </DocumentationShell>

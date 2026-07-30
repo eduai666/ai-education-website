@@ -23,9 +23,7 @@ export function SiteContentPage({ page }: SiteContentPageProps) {
     >
       <article className="article-content content-document-page">
         <div className="content-document-meta" aria-label="页面信息">
-          <span>{page.groupLabel}</span>
           <span>{page.readingTime}</span>
-          <span>内容持续更新</span>
         </div>
 
         <div className="markdown-document">
