@@ -1,0 +1,82 @@
+{
+  "schemaVersion": "cell-demo.schema.v1",
+  "demoVersion": "bio-cell-demo-v0.1",
+  "requirementsVersion": "requirements-v1",
+  "factsVersion": "facts-v1",
+  "contentReviewStatus": "pending-teacher-approval",
+  "initialStructureId": "cell-membrane",
+  "scene": {
+    "seed": "CELL-DEMO-20260731",
+    "camera": {
+      "position": [0, 0.15, 7.4],
+      "target": [0, 0, 0],
+      "fov": 42,
+      "near": 0.1,
+      "far": 50,
+      "minDistance": 5.2,
+      "maxDistance": 9.2
+    },
+    "modelRotation": [-0.12, -0.38, 0.05],
+    "initialDpr": 1,
+    "fallbackDpr": 0.75,
+    "background": "transparent"
+  },
+  "sources": [
+    {
+      "id": "openstax-biology-2e-4-3",
+      "title": "Biology 2e",
+      "organization": "OpenStax, Rice University",
+      "edition": "2e",
+      "section": "4.3 Eukaryotic Cells",
+      "url": "https://openstax.org/books/biology-2e/pages/4-3-eukaryotic-cells",
+      "accessedAt": "2026-07-31",
+      "license": "CC BY 4.0"
+    }
+  ],
+  "structures": [
+    {
+      "id": "cell-membrane",
+      "factId": "CELL-MEMBRANE-001",
+      "name": "细胞膜",
+      "englishName": "Cell membrane",
+      "summary": "包围细胞，并选择性地调节物质进入和离开细胞。",
+      "visualCue": "图中最外层的半透明边界",
+      "observationQuestion": "哪一个结构围住了整个细胞？",
+      "observationAnswer": "细胞膜",
+      "sourceIds": ["openstax-biology-2e-4-3"],
+      "reviewStatus": "verified-against-source",
+      "color": "#65d7c4"
+    },
+    {
+      "id": "nucleus",
+      "factId": "CELL-NUCLEUS-001",
+      "name": "细胞核",
+      "englishName": "Nucleus",
+      "summary": "保存细胞的大部分遗传物质，并参与调控许多细胞活动。",
+      "visualCue": "靠近中央的紫色球状结构",
+      "observationQuestion": "哪一个结构保存细胞的大部分遗传物质？",
+      "observationAnswer": "细胞核",
+      "sourceIds": ["openstax-biology-2e-4-3"],
+      "reviewStatus": "verified-against-source",
+      "color": "#a78bfa"
+    },
+    {
+      "id": "mitochondrion",
+      "factId": "CELL-MITO-001",
+      "name": "线粒体",
+      "englishName": "Mitochondrion",
+      "summary": "参与细胞呼吸，把营养物质中的能量转化为细胞可利用的 ATP。",
+      "visualCue": "橙色的豆荚状结构，内部有折叠纹路",
+      "observationQuestion": "哪一个结构参与产生细胞可利用的 ATP？",
+      "observationAnswer": "线粒体",
+      "sourceIds": ["openstax-biology-2e-4-3"],
+      "reviewStatus": "verified-against-source",
+      "color": "#fb9b68"
+    }
+  ],
+  "modelLimitations": [
+    "颜色是为了帮助区分结构，不代表真实细胞的固定颜色。",
+    "结构的大小、数量和位置经过简化，不能按比例理解。",
+    "真实细胞中的结构会运动、变形并与其他结构协同工作，本模型没有模拟这些过程。"
+  ]
+}

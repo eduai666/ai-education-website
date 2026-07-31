@@ -1,4 +1,5 @@
 import { DocumentationShell } from "@/components/layout/documentation-shell";
+import { ReadingTimeNote } from "@/components/content/reading-time-note";
 import { courseLessons, getAdjacentLessons, getLesson } from "@/server/content/courses";
 import type { Metadata } from "next";
 import Link from "next/link";
@@ -52,16 +53,9 @@ export default async function LessonPage({ params }: LessonPageProps) {
     >
       <article className="article-content lesson-article">
         <header className="lesson-header">
-          <div className="lesson-label-row">
-            <span className="lesson-label">{lesson.chapterLabel}</span>
-          </div>
+          <ReadingTimeNote value={lesson.readingTime} />
           <h1>{lesson.title}</h1>
           <p>{lesson.description}</p>
-          <div className="lesson-meta" aria-label="课程信息">
-            <span>{lesson.audience}</span>
-            <span>{lesson.readingTime}</span>
-            <span>{isMarkdownLesson ? "图文课程" : "包含互动与自测"}</span>
-          </div>
         </header>
 
         <div className={isMarkdownLesson ? "lesson-prose markdown-document course-markdown-document" : "lesson-prose"}>

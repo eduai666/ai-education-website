@@ -1,0 +1,85 @@
+{
+  "schemaVersion": "cell-asset-manifest.v1",
+  "demoVersion": "bio-cell-demo-v0.1",
+  "manifestVersion": "2026-07-31.1",
+  "status": "implementation-baseline",
+  "hashAlgorithm": "sha256",
+  "hashEncoding": "lowercase-hex",
+  "pathBase": "repository-root",
+  "bytePolicy": "raw-file-bytes",
+  "scope": "Cell-feature-specific visualization assets only. Shared site-shell assets such as the brand logo, favicon, and global font remain repository-level release responsibilities and are not claimed as audited here.",
+  "runtimeAssetPolicy": {
+    "networkFetchedVisualizationAssets": false,
+    "externalModels": [],
+    "externalTextures": [],
+    "externalFonts": [],
+    "externalDecoders": [],
+    "remoteRuntimeUrls": [],
+    "note": "Source citations may link to external reading, but the 2D and 3D visualizations do not fetch those pages or any remote asset during the learning flow."
+  },
+  "generatedVisuals": [
+    {
+      "id": "cell-2d-diagram-v1",
+      "kind": "programmatic-inline-svg",
+      "source": {
+        "path": "src/features/cell-architecture/cell-diagram.tsx",
+        "byteSize": 3593,
+        "mime": "application/typescript",
+        "sha256": "b470aa1ad78720747506cb1e0ee254862e786485611990d1f374fa88444cf872"
+      },
+      "configuration": {
+        "path": "docs/markdown/生物学习/00-可复现基线/cell-demo-v1.json",
+        "byteSize": 2918,
+        "mime": "application/json",
+        "sha256": "dc868ac665b8768b2e6c944237c6840ef87a33e0794cd98d5656e97bfbacc75e"
+      },
+      "outputFiles": [],
+      "provenance": "Project-authored code; no imported image or model asset.",
+      "licenseNote": "No separate asset license applies because the visual is emitted from repository source code."
+    },
+    {
+      "id": "cell-3d-scene-v1",
+      "kind": "programmatic-threejs-geometry",
+      "source": {
+        "path": "src/features/cell-architecture/cell-three-runtime.ts",
+        "byteSize": 16493,
+        "mime": "application/typescript",
+        "sha256": "ec2869caa9e105d219acd2881151f5227037ac442975a0a8689912cfe21767a5"
+      },
+      "configuration": {
+        "path": "docs/markdown/生物学习/00-可复现基线/cell-demo-v1.json",
+        "byteSize": 2918,
+        "mime": "application/json",
+        "sha256": "dc868ac665b8768b2e6c944237c6840ef87a33e0794cd98d5656e97bfbacc75e"
+      },
+      "fixedSeed": "CELL-DEMO-20260731",
+      "outputFiles": [],
+      "provenance": "Project-authored procedural scene using Three.js primitives; no imported GLB, image, HDR, font, or decoder asset.",
+      "licenseNote": "No separate model asset license applies; the Three.js code dependency is recorded below."
+    }
+  ],
+  "thirdPartyCode": [
+    {
+      "package": "three",
+      "version": "0.185.1",
+      "license": "MIT",
+      "purpose": "Browser-side procedural 3D rendering",
+      "versionEvidence": "package-lock.json"
+    }
+  ],
+  "budgets": {
+    "maximumTriangles": 50000,
+    "maximumDrawCalls": 30,
+    "maximumTextureEdgePixels": 1024,
+    "maximumCanvasCount": 1,
+    "initialDpr": 1,
+    "fallbackDpr": 0.75
+  },
+  "performanceEvidence": {
+    "testId": "PERF-001",
+    "status": "pending-versioned-browser-and-device-run",
+    "automatedBaseline": "The browser test reads renderer statistics, but no result is recorded in this manifest.",
+    "manualEvidenceRequired": "A named real device, exact browser, viewport, DPR, WebGL renderer, cold and warm runs, and the raw report must be saved under 03-测试与复现/runs/.",
+    "lowEndDeviceClaim": "pending-manual-real-device-test"
+  }
+}

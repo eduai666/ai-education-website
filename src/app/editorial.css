@@ -73,8 +73,16 @@ select {
 }
 
 .brand {
-  gap: 12px;
+  gap: 10px;
   font-weight: 600;
+}
+
+.brand-logo {
+  width: 28px;
+  height: auto;
+  flex: 0 0 auto;
+  image-rendering: pixelated;
+  transform: rotate(-90deg);
 }
 
 .brand-name {
@@ -321,6 +329,8 @@ select {
 }
 
 .right-sidebar {
+  display: flex;
+  flex-direction: column;
   padding: 40px 24px 40px 25px;
   border-left-color: var(--border);
   background: var(--canvas);
@@ -378,6 +388,22 @@ select {
   font-weight: 600;
 }
 
+.right-sidebar-brand {
+  display: flex;
+  margin-top: auto;
+  padding-top: 24px;
+  align-items: flex-end;
+  justify-content: flex-end;
+}
+
+.right-sidebar-brand img {
+  width: 38px;
+  height: auto;
+  opacity: 0.82;
+  image-rendering: pixelated;
+  transform: rotate(-90deg);
+}
+
 /* Type hierarchy */
 
 .article-header h1,
@@ -403,6 +429,31 @@ select {
     "PingFang SC", "Microsoft YaHei", sans-serif;
   font-weight: 600;
   letter-spacing: 0;
+}
+
+/* Reading estimate */
+
+.reading-time-note {
+  display: flex;
+  width: fit-content;
+  margin: 0 0 14px auto;
+  align-items: center;
+  gap: 8px;
+  color: var(--text-muted);
+  font-size: 13px;
+  font-variant-numeric: tabular-nums;
+  font-weight: 500;
+  letter-spacing: 0;
+  line-height: 1.5;
+  white-space: nowrap;
+}
+
+.reading-time-note::before {
+  width: 18px;
+  height: 2px;
+  flex: 0 0 auto;
+  background: var(--accent);
+  content: "";
 }
 
 /* Course header and chapter rhythm */
@@ -1448,6 +1499,37 @@ select {
   border-radius: 4px;
 }
 
+.markdown-document .course-figure {
+  margin: 34px 0 40px;
+}
+
+.markdown-document .course-figure-image {
+  width: 100%;
+  height: auto;
+  margin: 0;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  background: var(--surface);
+}
+
+.markdown-document .course-figure figcaption {
+  display: grid;
+  margin: 10px 2px 0;
+  color: var(--text-muted);
+  font-size: 13px;
+  grid-template-columns: 18px minmax(0, 1fr);
+  gap: 8px;
+  line-height: 1.7;
+}
+
+.markdown-document .course-figure figcaption::before {
+  width: 18px;
+  height: 2px;
+  margin-top: 0.78em;
+  background: var(--accent);
+  content: "";
+}
+
 /* Tablet and mobile navigation */
 
 .mobile-navigation > summary {
@@ -1598,6 +1680,10 @@ select {
     font-size: 17px;
   }
 
+  .brand-logo {
+    width: 24px;
+  }
+
   .brand-subtitle {
     display: none;
   }
@@ -1619,6 +1705,11 @@ select {
 
   .lesson-header {
     padding-bottom: 40px;
+  }
+
+  .reading-time-note {
+    margin-bottom: 12px;
+    font-size: 12px;
   }
 
   .lesson-header h1,

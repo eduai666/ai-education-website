@@ -1,0 +1,88 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ai-education.local/schemas/cell-ai-fixture-v1.schema.json",
+  "title": "Cell architecture offline AI fixture",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schemaVersion",
+    "fixtureId",
+    "demoVersion",
+    "requirementsVersion",
+    "factsVersion",
+    "source",
+    "reviewStatus",
+    "encoding",
+    "lineEndings",
+    "model",
+    "messages",
+    "parsed"
+  ],
+  "properties": {
+    "schemaVersion": { "const": "cell-ai-fixture.schema.v1" },
+    "fixtureId": { "const": "BIO-G3-PLAN-001" },
+    "demoVersion": { "const": "bio-cell-demo-v0.1" },
+    "requirementsVersion": { "const": "requirements-v1" },
+    "factsVersion": { "const": "facts-v1" },
+    "source": { "const": "synthetic-offline-fixture" },
+    "reviewStatus": { "const": "implementation-example" },
+    "encoding": { "const": "UTF-8" },
+    "lineEndings": { "const": "LF" },
+    "model": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["provider", "modelId", "generatedAt", "parameters"],
+      "properties": {
+        "provider": { "type": "string", "minLength": 1 },
+        "modelId": { "type": "string", "minLength": 1 },
+        "generatedAt": { "type": "string", "format": "date" },
+        "parameters": { "type": "object" }
+      }
+    },
+    "messages": {
+      "type": "array",
+      "minItems": 3,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["role", "content"],
+        "properties": {
+          "role": { "enum": ["system", "user", "assistant", "tool"] },
+          "content": { "type": "string", "minLength": 1 }
+        }
+      }
+    },
+    "parsed": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["summary", "suggestions"],
+      "properties": {
+        "summary": { "type": "string", "minLength": 1 },
+        "suggestions": {
+          "type": "array",
+          "minItems": 3,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "id",
+              "text",
+              "referenceDecision",
+              "decisionLabel",
+              "reason"
+            ],
+            "properties": {
+              "id": { "type": "string", "pattern": "^SUG-[0-9]{3}$" },
+              "text": { "type": "string", "minLength": 1 },
+              "referenceDecision": {
+                "enum": ["accept", "modify", "reject"]
+              },
+              "decisionLabel": { "type": "string", "minLength": 1 },
+              "reason": { "type": "string", "minLength": 1 }
+            }
+          }
+        }
+      }
+    }
+  }
+}

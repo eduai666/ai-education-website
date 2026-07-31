@@ -1,3 +1,4 @@
+import Image from "next/image";
 import Link from "next/link";
 import type { ReactNode } from "react";
 import { OnThisPage, type PageSection } from "./on-this-page";
@@ -25,6 +26,13 @@ export function DocumentationShell({
     <div className="page-shell">
       <header className="topbar">
         <Link className="brand" href="/" aria-label="返回网站首页">
+          <Image
+            className="brand-logo"
+            src="/brand/logo.png"
+            alt=""
+            width={407}
+            height={477}
+          />
           <span className="brand-name">AI 基础教育</span>
           <span className="brand-subtitle">公益学习平台</span>
         </Link>
@@ -68,6 +76,14 @@ export function DocumentationShell({
 
         <aside className="right-sidebar">
           <OnThisPage sections={sections} />
+          <div className="right-sidebar-brand" aria-hidden="true">
+            <Image
+              src="/brand/logo.png"
+              alt=""
+              width={407}
+              height={477}
+            />
+          </div>
         </aside>
       </div>
     </div>

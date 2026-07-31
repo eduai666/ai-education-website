@@ -1,0 +1,166 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ai-education.local/schemas/cell-demo-v1.schema.json",
+  "title": "Cell architecture demo content",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schemaVersion",
+    "demoVersion",
+    "requirementsVersion",
+    "factsVersion",
+    "contentReviewStatus",
+    "initialStructureId",
+    "scene",
+    "sources",
+    "structures",
+    "modelLimitations"
+  ],
+  "properties": {
+    "schemaVersion": { "const": "cell-demo.schema.v1" },
+    "demoVersion": { "const": "bio-cell-demo-v0.1" },
+    "requirementsVersion": { "const": "requirements-v1" },
+    "factsVersion": { "const": "facts-v1" },
+    "contentReviewStatus": {
+      "enum": ["pending-teacher-approval", "teacher-approved"]
+    },
+    "initialStructureId": {
+      "enum": ["cell-membrane", "nucleus", "mitochondrion"]
+    },
+    "scene": { "$ref": "#/$defs/scene" },
+    "sources": {
+      "type": "array",
+      "minItems": 1,
+      "items": { "$ref": "#/$defs/source" }
+    },
+    "structures": {
+      "type": "array",
+      "minItems": 3,
+      "maxItems": 3,
+      "items": { "$ref": "#/$defs/structure" }
+    },
+    "modelLimitations": {
+      "type": "array",
+      "minItems": 1,
+      "items": { "type": "string", "minLength": 1 }
+    }
+  },
+  "$defs": {
+    "vector3": {
+      "type": "array",
+      "prefixItems": [
+        { "type": "number" },
+        { "type": "number" },
+        { "type": "number" }
+      ],
+      "minItems": 3,
+      "maxItems": 3
+    },
+    "scene": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "seed",
+        "camera",
+        "modelRotation",
+        "initialDpr",
+        "fallbackDpr",
+        "background"
+      ],
+      "properties": {
+        "seed": { "type": "string", "minLength": 1 },
+        "camera": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "position",
+            "target",
+            "fov",
+            "near",
+            "far",
+            "minDistance",
+            "maxDistance"
+          ],
+          "properties": {
+            "position": { "$ref": "#/$defs/vector3" },
+            "target": { "$ref": "#/$defs/vector3" },
+            "fov": { "type": "number", "exclusiveMinimum": 0 },
+            "near": { "type": "number", "exclusiveMinimum": 0 },
+            "far": { "type": "number", "exclusiveMinimum": 0 },
+            "minDistance": { "type": "number", "exclusiveMinimum": 0 },
+            "maxDistance": { "type": "number", "exclusiveMinimum": 0 }
+          }
+        },
+        "modelRotation": { "$ref": "#/$defs/vector3" },
+        "initialDpr": { "const": 1 },
+        "fallbackDpr": { "const": 0.75 },
+        "background": { "const": "transparent" }
+      }
+    },
+    "source": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "title",
+        "organization",
+        "edition",
+        "section",
+        "url",
+        "accessedAt",
+        "license"
+      ],
+      "properties": {
+        "id": { "type": "string", "minLength": 1 },
+        "title": { "type": "string", "minLength": 1 },
+        "organization": { "type": "string", "minLength": 1 },
+        "edition": { "type": "string", "minLength": 1 },
+        "section": { "type": "string", "minLength": 1 },
+        "url": { "type": "string", "format": "uri" },
+        "accessedAt": { "type": "string", "format": "date" },
+        "license": { "type": "string", "minLength": 1 }
+      }
+    },
+    "structure": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "factId",
+        "name",
+        "englishName",
+        "summary",
+        "visualCue",
+        "observationQuestion",
+        "observationAnswer",
+        "sourceIds",
+        "reviewStatus",
+        "color"
+      ],
+      "properties": {
+        "id": {
+          "enum": ["cell-membrane", "nucleus", "mitochondrion"]
+        },
+        "factId": { "type": "string", "pattern": "^CELL-[A-Z-]+-001$" },
+        "name": { "type": "string", "minLength": 1 },
+        "englishName": { "type": "string", "minLength": 1 },
+        "summary": { "type": "string", "minLength": 1 },
+        "visualCue": { "type": "string", "minLength": 1 },
+        "observationQuestion": { "type": "string", "minLength": 1 },
+        "observationAnswer": { "type": "string", "minLength": 1 },
+        "sourceIds": {
+          "type": "array",
+          "minItems": 1,
+          "items": { "type": "string", "minLength": 1 }
+        },
+        "reviewStatus": {
+          "enum": ["verified-against-source", "teacher-approved"]
+        },
+        "color": {
+          "type": "string",
+          "pattern": "^#[0-9a-fA-F]{6}$"
+        }
+      }
+    }
+  }
+}

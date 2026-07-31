@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { ReadingTimeNote } from "@/components/content/reading-time-note";
 import { DocumentationShell } from "@/components/layout/documentation-shell";
 import { getSiblingPages, type SitePageEntry } from "@/server/content/site-pages";
 
@@ -22,9 +23,7 @@ export function SiteContentPage({ page }: SiteContentPageProps) {
       sections={page.sections}
     >
       <article className="article-content content-document-page">
-        <div className="content-document-meta" aria-label="页面信息">
-          <span>{page.readingTime}</span>
-        </div>
+        <ReadingTimeNote value={page.readingTime} />
 
         <div className="markdown-document">
           <Content />
@@ -43,7 +42,7 @@ export function SiteContentPage({ page }: SiteContentPageProps) {
               <strong>{next.navigationLabel}</strong>
             </Link>
           ) : (
-            <Link href="/courses/ai-basics/what-is-ai" className="content-pagination-next">
+            <Link href="/courses/ai-basics/ai-around-us" className="content-pagination-next">
               <span>继续学习</span>
               <strong>认识人工智能</strong>
             </Link>

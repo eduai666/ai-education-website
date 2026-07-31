@@ -1,0 +1,142 @@
+{
+  "schemaVersion": "cell-repro-inputs.v1",
+  "demoVersion": "bio-cell-demo-v0.1",
+  "manifestVersion": "2026-07-31.1",
+  "hashAlgorithm": "sha256",
+  "hashEncoding": "lowercase-hex",
+  "pathBase": "repository-root",
+  "bytePolicy": "raw-file-bytes",
+  "selfHashPolicy": "This manifest does not hash itself; its integrity is supplied by the Git source commit recorded in a later run report.",
+  "files": [
+    {
+      "path": ".nvmrc",
+      "role": "node-version",
+      "sha256": "55ce66383dffcaf804e6d3b03993b0d332cb5d7c38e26e9f92fb78ab040dc70c"
+    },
+    {
+      "path": "docs/markdown/生物学习/00-可复现基线/asset-manifest.json",
+      "role": "asset-provenance",
+      "sha256": "fed2cebaf1e942b54866af426b8d123c7409afebdd47c557ee455c4a94021cb9"
+    },
+    {
+      "path": "docs/markdown/生物学习/00-可复现基线/cell-demo-v1.json",
+      "role": "versioned-demo-content-and-scene-input",
+      "sha256": "dc868ac665b8768b2e6c944237c6840ef87a33e0794cd98d5656e97bfbacc75e"
+    },
+    {
+      "path": "docs/markdown/生物学习/00-可复现基线/cell-demo-v1.schema.json",
+      "role": "demo-content-schema",
+      "sha256": "f7d5e9a171656ad3ec34eb316e6230b048b5cd8a21369505ffbbf4c32f272886"
+    },
+    {
+      "path": "docs/markdown/生物学习/00-可复现基线/fixtures/ai/fixture-schema-v1.schema.json",
+      "role": "offline-ai-fixture-schema",
+      "sha256": "b7f2ebd4f494c204a130101e29f0c23ad92f61928a7b908334c9da0bd311244f"
+    },
+    {
+      "path": "docs/markdown/生物学习/00-可复现基线/fixtures/ai/plan-fixture-v1.json",
+      "role": "offline-ai-fixture",
+      "sha256": "59bdf7a98999655c915f1952988dae9c852474c4f8bf57c1478c32271fb58cc8"
+    },
+    {
+      "path": "docs/markdown/生物学习/03-测试与复现/cases.md",
+      "role": "fixed-test-cases",
+      "sha256": "1195f05f6dab201a4885988b7eaccbf372276b68f9318804d79880f2d9eea721"
+    },
+    {
+      "path": "docs/markdown/生物学习/03-测试与复现/runs/README.md",
+      "role": "run-evidence-protocol",
+      "sha256": "cd91b23fb5ca0797ac3ce78eceb195a691fbf23ae1f7cfa72f7497890306147f"
+    },
+    {
+      "path": "eslint.config.mjs",
+      "role": "lint-configuration",
+      "sha256": "870f1adccecf3051cbcd9fd307cef51d7633cf510979c181a81f4b1797273493"
+    },
+    {
+      "path": "next.config.ts",
+      "role": "build-configuration",
+      "sha256": "4c4499aa6e4ebdc777a824d2c41946fdb05454078e95186dea7d530049456a46"
+    },
+    {
+      "path": "package-lock.json",
+      "role": "dependency-lock",
+      "sha256": "ee15fcac7d38acf684476b5a5436dcee2e78af83ccb6dc660c32803c916347ad"
+    },
+    {
+      "path": "package.json",
+      "role": "commands-and-dependency-contract",
+      "sha256": "ba8163009fa7df7966074ddec5e9ff2b04e9a60d7bc0ee5cb764167284566d75"
+    },
+    {
+      "path": "playwright.config.ts",
+      "role": "browser-test-configuration",
+      "sha256": "3c97a15f3d750b5d93b860e0d187010319eaf92c6ca33cf031d93a52c59188ed"
+    },
+    {
+      "path": "scripts/cell-repro-hashes.mjs",
+      "role": "hash-verifier",
+      "sha256": "d35d417c5a20f04fa6cbb21e635f576b9427a5560bc2b22e1064e6ecc338e910"
+    },
+    {
+      "path": "src/app/projects/learn/cell-architecture/page.tsx",
+      "role": "route-entry",
+      "sha256": "82a8baa3c2d460218dc23156fbc71229e8dd335180e3c19ca555b04e95068d6b"
+    },
+    {
+      "path": "src/features/cell-architecture/ai-decision-lab.tsx",
+      "role": "offline-ai-learning-interaction",
+      "sha256": "800f436d33756cd9d24fe145909f8802eb3cbb8b76c51a116b96948443186b7c"
+    },
+    {
+      "path": "src/features/cell-architecture/cell-architecture-explorer.tsx",
+      "role": "interactive-controller-and-fallback",
+      "sha256": "84f0c87ee9373a8c9eccb378db51389db3cd0adf03d5e0509ce36b81df5abab0"
+    },
+    {
+      "path": "src/features/cell-architecture/cell-architecture.module.css",
+      "role": "demo-presentation",
+      "sha256": "c6f2b6d0d84c594f0df868ee6cc771ecb0542609d216deecead6bfa1815c79f4"
+    },
+    {
+      "path": "src/features/cell-architecture/cell-content.ts",
+      "role": "version-and-reference-loader",
+      "sha256": "92751cdc8a5acbc6f4232eee73e9cd585f0863939f548d832eebf3906bccfcdb"
+    },
+    {
+      "path": "src/features/cell-architecture/cell-diagram.tsx",
+      "role": "programmatic-2d-visual",
+      "sha256": "b470aa1ad78720747506cb1e0ee254862e786485611990d1f374fa88444cf872"
+    },
+    {
+      "path": "src/features/cell-architecture/cell-three-runtime.ts",
+      "role": "programmatic-3d-visual",
+      "sha256": "ec2869caa9e105d219acd2881151f5227037ac442975a0a8689912cfe21767a5"
+    },
+    {
+      "path": "src/features/cell-architecture/types.ts",
+      "role": "runtime-data-contract",
+      "sha256": "ff914407fb5b484cfccde934aa8c984254558dc365a41acc1a0a7151aeffcbe7"
+    },
+    {
+      "path": "tests/cell/data-contract.test.mjs",
+      "role": "content-contract-test",
+      "sha256": "b2a442d8182c554321e27360dcbaa4904259a4a32ae38fa37a29d5f8f207c2f1"
+    },
+    {
+      "path": "tests/cell/repro-hashes.test.mjs",
+      "role": "reproducibility-test",
+      "sha256": "79e5b189114bfd016a3dbd42bbfa69a2115ec1dfeaf68e34309c8231a367494a"
+    },
+    {
+      "path": "tests/e2e/cell-architecture.spec.ts",
+      "role": "browser-acceptance-test",
+      "sha256": "9ead48f2bfc9a134bf8c371ec242f5a0dc0828d34d7b6a41c5c4404f134bc125"
+    },
+    {
+      "path": "tsconfig.json",
+      "role": "typescript-configuration",
+      "sha256": "5c51df4c59f4510d8c7dadf07a5c32132228826a3b331da5e286207b4df7ef9c"
+    }
+  ]
+}

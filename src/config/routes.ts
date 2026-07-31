@@ -40,7 +40,6 @@ export const navigationGroups: NavigationGroup[] = [
     title: "AI 基础课程",
     icon: "book",
     items: [
-      { label: "15 分钟互动入门", href: "/courses/ai-basics/what-is-ai" },
       {
         label: "第一单元 · 认识人工智能",
         children: [
@@ -74,6 +73,7 @@ export const navigationGroups: NavigationGroup[] = [
     title: "实践项目",
     icon: "flask",
     items: [
+      { label: "细胞结构探索器", href: "/projects/learn/cell-architecture" },
       { label: "AI 创作实验室", href: "/guides/ai-creating", status: "即将推出" },
       { label: "AI 学习实验室", href: "/guides/ai-learning", status: "即将推出" },
     ],

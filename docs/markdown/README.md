@@ -80,7 +80,7 @@ docs/markdown/
 
 先把各课的文字结构、例子和参考资料定稿，再统一规划、生成和接入图片。现有图片暂时保留，但拆文阶段不为了配合旧图片改变讲解顺序；第四单元的图片留到文字定稿后再生成。
 
-叙述面向 10—14 岁学习者。语气要像老师面对面把事情讲明白：先给结论，再举例；句子尽量短；少堆工程术语，也不故意装幼稚。
+叙述面向 10—14 岁学习者。语气要像老师面对面把事情讲明白：直接讲清核心观点，再举例；句子尽量短；少堆工程术语，也不故意装幼稚。
 
 优先参考本地课程 `/home/zrj/local-references/ai-agents-for-beginners` 和 `/home/zrj/local-references/ai-agents-for-beginners-curated-zh`，并对照 [Microsoft AI Agents for Beginners](https://github.com/microsoft/ai-agents-for-beginners)、[Labuladong 的 LLM 与 Agent 讲解](https://labuladong.online/zh/ai-coding/basics/llm-and-agent/)、[Hugging Face Agents Course](https://huggingface.co/learn/agents-course/en/unit1/introduction)、[OECD 的人工智能基础资料](https://oecd.ai/en/inside-artificial-intelligence) 和 [UNESCO 学生人工智能能力框架](https://www.unesco.org/en/articles/ai-competency-framework-students?hub=195885)。
 
@@ -91,7 +91,7 @@ docs/markdown/
 1. 每个课程单元在 `docs/markdown` 中建立一个目录。
 2. 单元中的每一课新建一个 Markdown 文件。
 3. 按照本指南下面的模板填写内容。
-4. 图片放在 `docs/figures` 中对应单元的子目录，并在正文里标明使用位置。
+4. 图片放在当前课程单元的 `assets` 子目录，并在正文里标明使用位置。
 5. 写完后告诉我目录和文件名，以及希望它们按什么顺序发布。
 6. 我会负责网站排版、导航、互动效果、图解呈现、运行检查、Git 提交和发布。
 
@@ -204,7 +204,7 @@ docs/markdown/
 
 ### 图 1：[图片名称]
 
-- 建议文件：`../../figures/[单元名称]/[图片文件名].png`
+- 建议文件：`./assets/[图片文件名].png`
 - 内容：[图片需要展示什么]
 - 用途：[图片帮助学习者理解什么]
 - 风格：[配色、构图和年龄适配要求]
@@ -344,19 +344,33 @@ docs/markdown/
 
 ### 图片
 
-每个课程单元都在 `docs/figures` 中建立独立的图片子目录。例如：
+每个课程单元都在自己的 Markdown 目录中建立 `assets` 子目录。例如：
 
 ```text
-docs/figures/01-认识人工智能/
+docs/markdown/01-认识人工智能/
+├── 01-人工智能就在我们身边.md
+├── 02-AI系统怎样学习和给出结果.md
+└── assets/
+    └── 01-daily-ai-scenes.png
 ```
 
-课程 Markdown 位于单元子目录中，因此要返回两层再进入 `docs/figures`：
+课程 Markdown 与 `assets` 位于同一个单元目录中。网站使用 Next.js 静态导入读取图片，不能只写普通的 Markdown 相对图片路径。先在课文文件顶部导入图片：
 
-```markdown
-![图片中展示的内容](../../figures/01-认识人工智能/图片文件名.png)
+```mdx
+import courseFigure from "./assets/图片文件名.png";
 ```
 
-请使用能够说明图片内容的替代文字，不要只写“图片 1”。同一章内的图片建议使用序号开头，例如 `01-daily-ai-scenes.png`。
+再在需要解释内容的位置使用统一的课程插图组件：
+
+```mdx
+<CourseFigure
+  src={courseFigure}
+  alt="即使看不到图片，也能理解图中关键关系的替代文字"
+  caption="这张图在本段中要说明的结论。"
+/>
+```
+
+`alt` 要说明图中真正重要的关系，不要只写“图片 1”；`caption` 用来告诉读者这张图在当前段落中说明什么。两者不要写成完全相同的一句话。同一章内的图片建议使用序号开头，例如 `01-daily-ai-scenes.png`。
 
 如果暂时没有图片，可以先写一个图片需求：
 
