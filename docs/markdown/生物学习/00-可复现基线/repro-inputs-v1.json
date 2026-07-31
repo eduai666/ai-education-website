@@ -1,7 +1,7 @@
 {
   "schemaVersion": "cell-repro-inputs.v1",
-  "demoVersion": "bio-cell-demo-v0.1",
-  "manifestVersion": "2026-07-31.1",
+  "demoVersion": "bio-cell-demo-v0.2",
+  "manifestVersion": "2026-07-31.4",
   "hashAlgorithm": "sha256",
   "hashEncoding": "lowercase-hex",
   "pathBase": "repository-root",
@@ -16,32 +16,32 @@
     {
       "path": "docs/markdown/生物学习/00-可复现基线/asset-manifest.json",
       "role": "asset-provenance",
-      "sha256": "fed2cebaf1e942b54866af426b8d123c7409afebdd47c557ee455c4a94021cb9"
+      "sha256": "fc682bc732e95ff5c56f64143114851ab243caf1c5a1f04368ae878b93b475fb"
     },
     {
       "path": "docs/markdown/生物学习/00-可复现基线/cell-demo-v1.json",
       "role": "versioned-demo-content-and-scene-input",
-      "sha256": "dc868ac665b8768b2e6c944237c6840ef87a33e0794cd98d5656e97bfbacc75e"
+      "sha256": "a97b5cf520cab0b177a938858e1400257df3f9a59f2d10371ab4f60a80d23614"
     },
     {
       "path": "docs/markdown/生物学习/00-可复现基线/cell-demo-v1.schema.json",
       "role": "demo-content-schema",
-      "sha256": "f7d5e9a171656ad3ec34eb316e6230b048b5cd8a21369505ffbbf4c32f272886"
+      "sha256": "378c13f236b50e823556a27ee1c01073ded062974e1c069a7da454c4c7751608"
     },
     {
       "path": "docs/markdown/生物学习/00-可复现基线/fixtures/ai/fixture-schema-v1.schema.json",
       "role": "offline-ai-fixture-schema",
-      "sha256": "b7f2ebd4f494c204a130101e29f0c23ad92f61928a7b908334c9da0bd311244f"
+      "sha256": "44e3a8ad1dd41fbfe8bbf412cfea54577d6e3bf48dad33e91d4ffb550b497c30"
     },
     {
       "path": "docs/markdown/生物学习/00-可复现基线/fixtures/ai/plan-fixture-v1.json",
       "role": "offline-ai-fixture",
-      "sha256": "59bdf7a98999655c915f1952988dae9c852474c4f8bf57c1478c32271fb58cc8"
+      "sha256": "273879a06c58760402c3599f92291d0ec5e7c86ff9b04152faf3a00f382507e1"
     },
     {
       "path": "docs/markdown/生物学习/03-测试与复现/cases.md",
       "role": "fixed-test-cases",
-      "sha256": "1195f05f6dab201a4885988b7eaccbf372276b68f9318804d79880f2d9eea721"
+      "sha256": "b9c84c8f5512535939178e73c2efbf738b5f1559fa1e50ab2d695ea2c749401e"
     },
     {
       "path": "docs/markdown/生物学习/03-测试与复现/runs/README.md",
@@ -74,14 +74,29 @@
       "sha256": "3c97a15f3d750b5d93b860e0d187010319eaf92c6ca33cf031d93a52c59188ed"
     },
     {
+      "path": "public/models/cell-architecture-studio/animal-cell-nih.glb",
+      "role": "fixed-third-party-animal-cell-glb",
+      "sha256": "416b95d454e4243a49a530e7e9e4447d33c543e838d072ae5128c38bdad7d7c6"
+    },
+    {
+      "path": "public/models/cell-architecture-studio/bacteria-wall-nih.glb",
+      "role": "fixed-third-party-gram-positive-cell-wall-glb",
+      "sha256": "8c25bccaf828353ced1849483f9701266b43ae6f51899f6f6a3c45bfc7bede57"
+    },
+    {
+      "path": "public/models/cell-architecture-studio/neuron-nih.glb",
+      "role": "fixed-third-party-neuron-glb",
+      "sha256": "d979bca2c94eb7b78de51bf68642ba00bf0b21d38d31161348f033c2a893a4a4"
+    },
+    {
       "path": "scripts/cell-repro-hashes.mjs",
       "role": "hash-verifier",
-      "sha256": "d35d417c5a20f04fa6cbb21e635f576b9427a5560bc2b22e1064e6ecc338e910"
+      "sha256": "14b4478be5b6b8a8fbb945bd86a64c1e29dd73b1a81b230dae0b86e9cef91dfe"
     },
     {
       "path": "src/app/projects/learn/cell-architecture/page.tsx",
       "role": "route-entry",
-      "sha256": "82a8baa3c2d460218dc23156fbc71229e8dd335180e3c19ca555b04e95068d6b"
+      "sha256": "51335cdb80d7a8192a627e922daa38b5b52db62c8fab9ecfd942e13823b6d6b8"
     },
     {
       "path": "src/features/cell-architecture/ai-decision-lab.tsx",
@@ -91,12 +106,12 @@
     {
       "path": "src/features/cell-architecture/cell-architecture-explorer.tsx",
       "role": "interactive-controller-and-fallback",
-      "sha256": "84f0c87ee9373a8c9eccb378db51389db3cd0adf03d5e0509ce36b81df5abab0"
+      "sha256": "0a874866157e88179cf9b32e82adee9c14c0bc8ff406acc7a5b04caa6afbab16"
     },
     {
       "path": "src/features/cell-architecture/cell-architecture.module.css",
       "role": "demo-presentation",
-      "sha256": "c6f2b6d0d84c594f0df868ee6cc771ecb0542609d216deecead6bfa1815c79f4"
+      "sha256": "568ffb44efe1583e564d512cbdf3ac010848e7196078eafb68ba4cc4e5746541"
     },
     {
       "path": "src/features/cell-architecture/cell-content.ts",
@@ -109,29 +124,44 @@
       "sha256": "b470aa1ad78720747506cb1e0ee254862e786485611990d1f374fa88444cf872"
     },
     {
+      "path": "src/features/cell-architecture/cell-model-catalog.ts",
+      "role": "serializable-3d-model-catalog",
+      "sha256": "7fc4288ba6960f88726d28446c4c846fabc8732d5dae1ac42628fcecfadb5388"
+    },
+    {
+      "path": "src/features/cell-architecture/cell-observation-challenge.tsx",
+      "role": "interactive-2d-observation-assessment",
+      "sha256": "5c177323ab8b83a3719ee85a6e880f3fbb6ff30cb05f93abfc6ea8c819536019"
+    },
+    {
+      "path": "src/features/cell-architecture/cell-three-model.ts",
+      "role": "programmatic-detailed-3d-model",
+      "sha256": "665ad649642c500b8741c76c66a069da4d8614eb14107c4e7c3212ebb192ab3a"
+    },
+    {
       "path": "src/features/cell-architecture/cell-three-runtime.ts",
       "role": "programmatic-3d-visual",
-      "sha256": "ec2869caa9e105d219acd2881151f5227037ac442975a0a8689912cfe21767a5"
+      "sha256": "55b8de6a14c0785a3e5e460a90c85a99cc9161ffc76105e7fe3e64936eb7e6e1"
     },
     {
       "path": "src/features/cell-architecture/types.ts",
       "role": "runtime-data-contract",
-      "sha256": "ff914407fb5b484cfccde934aa8c984254558dc365a41acc1a0a7151aeffcbe7"
+      "sha256": "99d28769e8a8134715923f82ad91fe24bf49d4dd245ae68005e0da44534913c5"
     },
     {
       "path": "tests/cell/data-contract.test.mjs",
       "role": "content-contract-test",
-      "sha256": "b2a442d8182c554321e27360dcbaa4904259a4a32ae38fa37a29d5f8f207c2f1"
+      "sha256": "e7a55e4c14ec9fcd699b2ffe33c69b81ca73cab3fb2bfb73305a0881703878c0"
     },
     {
       "path": "tests/cell/repro-hashes.test.mjs",
       "role": "reproducibility-test",
-      "sha256": "79e5b189114bfd016a3dbd42bbfa69a2115ec1dfeaf68e34309c8231a367494a"
+      "sha256": "7e1e8fff84b8609c77be8cbd3c57992dad3f30c9b38188659261edac0eeb7d6b"
     },
     {
       "path": "tests/e2e/cell-architecture.spec.ts",
       "role": "browser-acceptance-test",
-      "sha256": "9ead48f2bfc9a134bf8c371ec242f5a0dc0828d34d7b6a41c5c4404f134bc125"
+      "sha256": "fdcae58ff46368d70e802c3bbdb1866888a024a990c5041f9d17e2ba6bba6956"
     },
     {
       "path": "tsconfig.json",

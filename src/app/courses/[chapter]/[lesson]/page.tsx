@@ -9,6 +9,24 @@ type LessonPageProps = {
   params: Promise<{ chapter: string; lesson: string }>;
 };
 
+function PaginationChevron({ direction }: { direction: "left" | "right" }) {
+  return (
+    <svg
+      className="lesson-pagination-icon"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden="true"
+      focusable="false"
+    >
+      <path d={direction === "left" ? "m15 18-6-6 6-6" : "m9 18 6-6-6-6"} />
+    </svg>
+  );
+}
+
 export const dynamicParams = false;
 
 export function generateStaticParams() {
@@ -46,16 +64,24 @@ export default async function LessonPage({ params }: LessonPageProps) {
       activePath={activePath}
       breadcrumbs={[
         { label: "首页", href: "/" },
-        { label: "AI 基础课程", href: "/#content-guide" },
+        { label: "AI 基础课程", href: "/about/learning-map" },
         { label: lesson.title },
       ]}
       sections={lesson.sections}
     >
       <article className="article-content lesson-article">
+        <ReadingTimeNote value={lesson.readingTime} />
+
         <header className="lesson-header">
-          <ReadingTimeNote value={lesson.readingTime} />
+          <div className="lesson-label-row">
+            <span className="lesson-label">{lesson.chapterLabel}</span>
+          </div>
           <h1>{lesson.title}</h1>
           <p>{lesson.description}</p>
+          <div className="lesson-meta" aria-label="课程信息">
+            <span>{lesson.audience}</span>
+            <span>{isMarkdownLesson ? "图文课程" : "包含互动与自测"}</span>
+          </div>
         </header>
 
         <div className={isMarkdownLesson ? "lesson-prose markdown-document course-markdown-document" : "lesson-prose"}>
@@ -64,26 +90,46 @@ export default async function LessonPage({ params }: LessonPageProps) {
 
         <nav className="lesson-pagination" aria-label="课程前后导航">
           {previous ? (
-            <Link href={`/courses/${previous.chapter}/${previous.slug}`} className="lesson-pagination-home">
-              <span>上一课</span>
+            <Link
+              href={`/courses/${previous.chapter}/${previous.slug}`}
+              className="lesson-pagination-home"
+              rel="prev"
+            >
+              <span className="lesson-pagination-kicker">
+                <PaginationChevron direction="left" />
+                <span>上一课</span>
+              </span>
               <strong>{previous.title}</strong>
             </Link>
           ) : (
             <Link href="/" className="lesson-pagination-home">
-              <span>返回</span>
+              <span className="lesson-pagination-kicker">
+                <PaginationChevron direction="left" />
+                <span>返回</span>
+              </span>
               <strong>课程首页</strong>
             </Link>
           )}
           {next ? (
-            <Link href={`/courses/${next.chapter}/${next.slug}`} className="lesson-pagination-next">
-              <span>下一课</span>
+            <Link
+              href={`/courses/${next.chapter}/${next.slug}`}
+              className="lesson-pagination-next"
+              rel="next"
+            >
+              <span className="lesson-pagination-kicker">
+                <PaginationChevron direction="right" />
+                <span>下一课</span>
+              </span>
               <strong>{next.title}</strong>
             </Link>
           ) : (
-            <span className="lesson-pagination-next is-disabled" aria-disabled="true">
-              <span>本轮学习完成</span>
+            <Link href="/about/learning-map" className="lesson-pagination-next">
+              <span className="lesson-pagination-kicker">
+                <PaginationChevron direction="right" />
+                <span>本轮学习完成</span>
+              </span>
               <strong>回到课程首页继续探索</strong>
-            </span>
+            </Link>
           )}
         </nav>
       </article>

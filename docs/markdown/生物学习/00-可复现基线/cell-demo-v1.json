@@ -1,6 +1,6 @@
 {
   "schemaVersion": "cell-demo.schema.v1",
-  "demoVersion": "bio-cell-demo-v0.1",
+  "demoVersion": "bio-cell-demo-v0.2",
   "requirementsVersion": "requirements-v1",
   "factsVersion": "facts-v1",
   "contentReviewStatus": "pending-teacher-approval",
@@ -8,15 +8,15 @@
   "scene": {
     "seed": "CELL-DEMO-20260731",
     "camera": {
-      "position": [0, 0.15, 7.4],
+      "position": [0, 0.2, 5.8],
       "target": [0, 0, 0],
-      "fov": 42,
+      "fov": 38,
       "near": 0.1,
       "far": 50,
-      "minDistance": 5.2,
-      "maxDistance": 9.2
+      "minDistance": 4.2,
+      "maxDistance": 8.4
     },
-    "modelRotation": [-0.12, -0.38, 0.05],
+    "modelRotation": [0.24, -0.08, 0.03],
     "initialDpr": 1,
     "fallbackDpr": 0.75,
     "background": "transparent"

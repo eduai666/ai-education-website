@@ -50,10 +50,14 @@ export const navigationGroups: NavigationGroup[] = [
           { label: "模型怎样使用工具", href: "/courses/ai-basics/model-tool-use" },
           { label: "Agent 怎样完成多步任务", href: "/courses/ai-basics/agent-multi-step-tasks" },
           { label: "安全使用 AI 与人的责任", href: "/courses/ai-basics/responsible-ai-use" },
+          { label: "怎样选择 AI 编程工具", href: "/courses/ai-basics/choosing-ai-coding-tools" },
+          { label: "CLI 和桌面客户端有什么不同", href: "/courses/ai-basics/cli-vs-desktop-clients" },
+          { label: "Claude Code 桌面版接入 API", href: "/courses/ai-basics/claude-code-desktop-api" },
+          { label: "Codex 桌面版接入 API", href: "/courses/ai-basics/codex-desktop-api" },
         ],
       },
-      { label: "第二单元 · 机器学习", href: "/#course-plan", status: "即将推出" },
-      { label: "第三单元 · 大语言模型", href: "/#course-plan", status: "即将推出" },
+      { label: "第二单元 · 机器学习", href: "/about/learning-map", status: "即将推出" },
+      { label: "第三单元 · 大语言模型", href: "/about/learning-map", status: "即将推出" },
       {
         label: "第四单元 · 什么是智能体",
         children: [
@@ -66,7 +70,7 @@ export const navigationGroups: NavigationGroup[] = [
           { label: "什么时候应该让智能体停下来", href: "/courses/agents/when-agents-should-stop" },
         ],
       },
-      { label: "第五单元 · 安全使用 AI", href: "/#course-plan", status: "即将推出" },
+      { label: "第五单元 · 安全使用 AI", href: "/about/learning-map", status: "即将推出" },
     ],
   },
   {

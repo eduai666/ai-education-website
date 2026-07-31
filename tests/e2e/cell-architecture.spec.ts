@@ -1,6 +1,11 @@
 import { expect, test, type Page } from "@playwright/test";
 
 const route = "/projects/learn/cell-architecture";
+const modelUrls = {
+  animal: "/models/cell-architecture-studio/animal-cell-nih.glb",
+  neuron: "/models/cell-architecture-studio/neuron-nih.glb",
+  bacteriaWall: "/models/cell-architecture-studio/bacteria-wall-nih.glb",
+} as const;
 
 async function getTransferredBytes(page: Page) {
   return page.evaluate(() => {
@@ -56,10 +61,60 @@ test("UI-001/UI-004: 外部按钮支持鼠标和键盘并同步稳定 ID", async
   );
 });
 
-test("UI-002/PERF-001: Three.js 只在主动启动后加载并可确定性复位", async ({ page }, testInfo) => {
+test("OBS-001: 三道观察题支持作答、反馈和订正到 3/3", async ({ page }) => {
+  await page.goto(route);
+
+  const challenge = page.getByTestId("cell-observation-challenge");
+  const membraneQuestion = challenge.locator(
+    '[data-question-id="cell-membrane"]',
+  );
+  const nucleusQuestion = challenge.locator('[data-question-id="nucleus"]');
+  const mitochondrionQuestion = challenge.locator(
+    '[data-question-id="mitochondrion"]',
+  );
+  const checkButton = challenge.getByRole("button", { name: "检查答案" });
+
+  await expect(challenge).toContainText("已作答 0/3");
+  await expect(checkButton).toBeDisabled();
+
+  const wrongMembraneAnswer = membraneQuestion.getByRole("radio", {
+    name: /细胞核/,
+  });
+  await wrongMembraneAnswer.focus();
+  await wrongMembraneAnswer.press("Space");
+  await nucleusQuestion.getByRole("radio", { name: /细胞核/ }).check();
+  await mitochondrionQuestion
+    .getByRole("radio", { name: /线粒体/ })
+    .check();
+
+  await expect(challenge).toContainText("已作答 3/3");
+  await expect(checkButton).toBeEnabled();
+  await checkButton.click();
+
+  await expect(challenge).toHaveAttribute("data-score", "2/3");
+  await expect(challenge).toContainText("第 1 次检查：2/3");
+  await expect(membraneQuestion).toContainText("正确答案是“细胞膜”");
+
+  await membraneQuestion.getByRole("radio", { name: /细胞膜/ }).check();
+  await challenge.getByRole("button", { name: "检查答案" }).click();
+
+  await expect(challenge).toHaveAttribute("data-score", "3/3");
+  await expect(challenge).toContainText("挑战完成：3/3");
+
+  await challenge.getByRole("button", { name: "重新挑战" }).click();
+  await expect(challenge).toHaveAttribute("data-score", "pending");
+  await expect(challenge).toContainText("已作答 0/3");
+  await expect(challenge.getByRole("radio", { checked: true })).toHaveCount(0);
+});
+
+test("UI-002/PERF-001: 精细 GLB 只在主动启动后加载并可确定性复位", async ({ page }, testInfo) => {
   const scriptRequests = new Set<string>();
+  const modelRequests = new Set<string>();
   page.on("request", (request) => {
     if (request.resourceType() === "script") scriptRequests.add(request.url());
+    if (request.url().endsWith(".glb")) {
+      modelRequests.add(request.url());
+    }
   });
 
   await page.goto(route);
@@ -67,8 +122,9 @@ test("UI-002/PERF-001: Three.js 只在主动启动后加载并可确定性复位
   const initialScripts = new Set(scriptRequests);
   const initialTransferBytes = await getTransferredBytes(page);
   await expect(page.locator("canvas")).toHaveCount(0);
+  expect(modelRequests.size).toBe(0);
 
-  await page.getByRole("button", { name: "启动 3D" }).click();
+  await page.getByRole("button", { name: "启动动物细胞 3D" }).click();
   await expect(page.locator('[data-view="3d"]')).toBeVisible({ timeout: 15_000 });
   await page.waitForLoadState("networkidle");
 
@@ -80,23 +136,60 @@ test("UI-002/PERF-001: Three.js 只在主动启动后加载并可确定性复位
   expect(sceneStatsMatch).not.toBeNull();
   if (!sceneStatsMatch) throw new Error("Unable to parse Three.js scene stats.");
 
-  const drawCalls = Number(sceneStatsMatch[1].replaceAll(",", ""));
-  const triangles = Number(sceneStatsMatch[2].replaceAll(",", ""));
+  const initialDrawCalls = Number(sceneStatsMatch[1].replaceAll(",", ""));
+  const initialTriangles = Number(sceneStatsMatch[2].replaceAll(",", ""));
   const totalTransferBytes = await getTransferredBytes(page);
   const threeAdditionalTransferBytes = totalTransferBytes - initialTransferBytes;
 
-  expect(drawCalls).toBeLessThanOrEqual(30);
-  expect(triangles).toBeLessThanOrEqual(50_000);
   expect(threeAdditionalTransferBytes).toBeLessThanOrEqual(5_000_000);
+  expect([...modelRequests]).toEqual([
+    `http://127.0.0.1:3100${modelUrls.animal}`,
+  ]);
   await expect(page.locator("canvas")).toHaveCount(1);
+  await expect(page.getByText("3D 视图")).toBeVisible();
+  await expect(page.getByText("白色光环表示当前选择")).toBeVisible();
+
+  await page.getByRole("button", { name: /线粒体/ }).click();
+  const mitochondrionStatsText = (await sceneStats.textContent()) ?? "";
+  const mitochondrionStatsMatch = mitochondrionStatsText.match(
+    /([\d,]+) draw calls · ([\d,]+) triangles/u,
+  );
+  expect(mitochondrionStatsMatch).not.toBeNull();
+  if (!mitochondrionStatsMatch) {
+    throw new Error("Unable to parse selected mitochondrion scene stats.");
+  }
+
+  const mitochondrionDrawCalls = Number(
+    mitochondrionStatsMatch[1].replaceAll(",", ""),
+  );
+  const mitochondrionTriangles = Number(
+    mitochondrionStatsMatch[2].replaceAll(",", ""),
+  );
+  const peakDrawCalls = Math.max(initialDrawCalls, mitochondrionDrawCalls);
+  const peakTriangles = Math.max(initialTriangles, mitochondrionTriangles);
+
+  expect(peakDrawCalls).toBeGreaterThanOrEqual(1);
+  expect(peakDrawCalls).toBeLessThanOrEqual(12);
+  expect(peakTriangles).toBeGreaterThanOrEqual(84_000);
+  expect(peakTriangles).toBeLessThanOrEqual(100_000);
 
   await testInfo.attach("PERF-001-browser-baseline.json", {
     body: JSON.stringify(
       {
         initialTransferBytes,
         threeAdditionalTransferBytes,
-        drawCalls,
-        triangles,
+        statsBySelection: {
+          "cell-membrane": {
+            drawCalls: initialDrawCalls,
+            triangles: initialTriangles,
+          },
+          mitochondrion: {
+            drawCalls: mitochondrionDrawCalls,
+            triangles: mitochondrionTriangles,
+          },
+        },
+        peakDrawCalls,
+        peakTriangles,
         evidenceBoundary:
           "Automated desktop Chromium baseline; not a real-device performance claim.",
       },
@@ -109,12 +202,164 @@ test("UI-002/PERF-001: Three.js 只在主动启动后加载并可确定性复位
   const lazyScripts = [...scriptRequests].filter((url) => !initialScripts.has(url));
   expect(lazyScripts.length).toBeGreaterThan(0);
 
-  await page.getByRole("button", { name: /线粒体/ }).click();
+  await page.getByRole("button", { name: /细胞核/ }).click();
+  const canvas = page.getByTestId("cell-3d-canvas");
+  await canvas.scrollIntoViewIfNeeded();
+  const canvasBounds = await canvas.boundingBox();
+  expect(canvasBounds).not.toBeNull();
+  if (!canvasBounds) throw new Error("Unable to measure the 3D canvas.");
+  await page.mouse.click(
+    canvasBounds.x + canvasBounds.width * 0.5,
+    canvasBounds.y + canvasBounds.height * 0.56,
+  );
+  await expect(page.locator('[data-selected-structure="nucleus"]')).toBeVisible();
+
+  await page.mouse.click(
+    canvasBounds.x + canvasBounds.width * 0.65,
+    canvasBounds.y + canvasBounds.height * 0.3,
+  );
+  await expect(
+    page.locator('[data-selected-structure="mitochondrion"]'),
+  ).toBeVisible();
+
+  await page.mouse.click(
+    canvasBounds.x + canvasBounds.width * 0.05,
+    canvasBounds.y + canvasBounds.height * 0.05,
+  );
+  await expect(page.locator('[data-selected-structure="none"]')).toBeVisible();
+
   await page.getByRole("button", { name: "复位视角" }).click();
   await expect(page.getByRole("button", { name: /细胞膜/ })).toHaveAttribute(
     "aria-pressed",
     "true",
   );
+  await expect(sceneStats).toHaveText(sceneStatsText);
+});
+
+test("UI-005/PERF-002: 三个模型按选择逐个请求并隔离动物细胞结构", async ({
+  page,
+}) => {
+  const requestedModels = new Set<string>();
+  page.on("request", (request) => {
+    const url = new URL(request.url());
+    if (url.pathname.endsWith(".glb")) requestedModels.add(url.pathname);
+  });
+
+  await page.goto(route);
+  await page.waitForLoadState("networkidle");
+
+  const animalButton = page.getByRole("button", {
+    name: "动物细胞",
+    exact: true,
+  });
+  const neuronButton = page.getByRole("button", {
+    name: "神经元",
+    exact: true,
+  });
+  const bacteriaButton = page.getByRole("button", {
+    name: "细菌细胞壁",
+    exact: true,
+  });
+  const animalStructureControls = page.getByRole("group", {
+    name: "选择动物细胞结构",
+  });
+  const sceneStats = page.getByTestId("scene-stats");
+
+  await expect(animalButton).toHaveAttribute("aria-pressed", "true");
+  await expect(neuronButton).toHaveAttribute("aria-pressed", "false");
+  await expect(bacteriaButton).toHaveAttribute("aria-pressed", "false");
+  await expect(animalStructureControls).toBeVisible();
+  expect([...requestedModels]).toEqual([]);
+
+  await page.getByRole("button", { name: "启动动物细胞 3D" }).click();
+  await expect(
+    page.locator('[data-model-id="animal-cell"][data-view="3d"]'),
+  ).toBeVisible({ timeout: 15_000 });
+  await expect.poll(() => [...requestedModels]).toEqual([modelUrls.animal]);
+
+  await neuronButton.click();
+  await expect(
+    page.locator('[data-model-id="neuron"][data-view="3d"]'),
+  ).toBeVisible({ timeout: 15_000 });
+  await expect(neuronButton).toHaveAttribute("aria-pressed", "true");
+  await expect(animalButton).toHaveAttribute("aria-pressed", "false");
+  await expect.poll(() => [...requestedModels]).toEqual([
+    modelUrls.animal,
+    modelUrls.neuron,
+  ]);
+  await expect(sceneStats).toContainText("160,256 triangles");
+  await expect(animalStructureControls).toHaveCount(0);
+  await expect(
+    page.locator('[data-selected-structure="not-applicable"]'),
+  ).toBeVisible();
+  await expect(page.getByText("自由观察 · 暂无结构热点")).toBeVisible();
+
+  await bacteriaButton.click();
+  await expect(
+    page.locator('[data-model-id="bacteria-wall"][data-view="3d"]'),
+  ).toBeVisible({ timeout: 15_000 });
+  await expect(bacteriaButton).toHaveAttribute("aria-pressed", "true");
+  await expect(neuronButton).toHaveAttribute("aria-pressed", "false");
+  await expect.poll(() => [...requestedModels]).toEqual([
+    modelUrls.animal,
+    modelUrls.neuron,
+    modelUrls.bacteriaWall,
+  ]);
+  await expect(sceneStats).toContainText("25,542 triangles");
+  await expect(animalStructureControls).toHaveCount(0);
+});
+
+test("FAIL-011: 快速切换会中止旧模型且不回写过期场景", async ({ page }) => {
+  let neuronRequestSeen = false;
+  let releaseNeuronRequest = () => {};
+  const neuronRequestRelease = new Promise<void>((resolve) => {
+    releaseNeuronRequest = resolve;
+  });
+
+  await page.route(`**${modelUrls.neuron}`, async (interceptedRoute) => {
+    neuronRequestSeen = true;
+    await neuronRequestRelease;
+    try {
+      await interceptedRoute.continue();
+    } catch {
+      // The expected AbortController cancellation may close this intercepted request.
+    }
+  });
+
+  try {
+    await page.goto(route);
+    await page.getByRole("button", { name: "神经元", exact: true }).click();
+    await expect.poll(() => neuronRequestSeen).toBe(true);
+
+    await page
+      .getByRole("button", { name: "细菌细胞壁", exact: true })
+      .click();
+    await expect(
+      page.locator('[data-model-id="bacteria-wall"][data-view="3d"]'),
+    ).toBeVisible({ timeout: 15_000 });
+    await expect(page.locator("canvas")).toHaveCount(1);
+    await expect(page.getByTestId("scene-stats")).toContainText(
+      "25,542 triangles",
+    );
+
+    releaseNeuronRequest();
+    await page.unrouteAll({ behavior: "wait" });
+    await page.waitForTimeout(200);
+
+    await expect(
+      page.locator('[data-model-id="bacteria-wall"][data-view="3d"]'),
+    ).toBeVisible();
+    await expect(
+      page.locator('[data-model-id="neuron"][data-view="3d"]'),
+    ).toHaveCount(0);
+    await expect(page.locator("canvas")).toHaveCount(1);
+    await expect(
+      page.getByRole("heading", { level: 2, name: "细菌细胞壁截面" }),
+    ).toBeVisible();
+  } finally {
+    releaseNeuronRequest();
+    await page.unrouteAll({ behavior: "ignoreErrors" });
+  }
 });
 
 test("FAIL-002: WebGL2 创建失败时明确回到 2D", async ({ page }) => {
@@ -131,11 +376,13 @@ test("FAIL-002: WebGL2 创建失败时明确回到 2D", async ({ page }) => {
   });
 
   await page.goto(route);
-  await page.getByRole("button", { name: "启动 3D" }).click();
+  await page.getByRole("button", { name: "启动动物细胞 3D" }).click();
 
   await expect(page.locator('[data-error-reason="webgl2-unavailable"]')).toBeVisible();
   await expect(page.locator('[data-fact-id="CELL-MEMBRANE-001"]')).toBeVisible();
-  await expect(page.getByRole("button", { name: "重新尝试 3D" })).toBeVisible();
+  await expect(
+    page.getByRole("button", { name: "重试动物细胞 3D" }),
+  ).toBeVisible();
 });
 
 test("FAIL-003: 3D 组件加载超时后可重试并保留 2D", async ({ page }) => {
@@ -161,21 +408,45 @@ test("FAIL-003: 3D 组件加载超时后可重试并保留 2D", async ({ page })
   await page.waitForLoadState("networkidle");
 
   holdLazyScript = true;
-  await page.getByRole("button", { name: "启动 3D" }).click();
+  await page.getByRole("button", { name: "启动动物细胞 3D" }).click();
   await lazyScriptStarted;
   await page.clock.fastForward(12_001);
 
   await expect(page.locator('[data-error-reason="scene-load-timeout"]')).toBeVisible();
   await expect(page.locator('[data-fact-id="CELL-MITO-001"]')).toBeVisible();
-  await expect(page.getByRole("button", { name: "重新尝试 3D" })).toBeVisible();
+  await expect(
+    page.getByRole("button", { name: "重试动物细胞 3D" }),
+  ).toBeVisible();
 
   releaseLazyScript();
   await page.unrouteAll({ behavior: "wait" });
 });
 
+test("FAIL-003B: 精细模型加载失败后可重试并保留 2D", async ({ page }) => {
+  await page.route("**/animal-cell-nih.glb", async (route) => {
+    await route.fulfill({
+      status: 404,
+      contentType: "text/plain",
+      body: "model unavailable",
+    });
+  });
+
+  await page.goto(route);
+  await page.getByRole("button", { name: "启动动物细胞 3D" }).click();
+
+  await expect(
+    page.locator('[data-error-reason="model-load-failed"]'),
+  ).toBeVisible();
+  await expect(page.locator('[data-fact-id="CELL-NUCLEUS-001"]')).toBeVisible();
+  await expect(
+    page.getByRole("button", { name: "重试动物细胞 3D" }),
+  ).toBeVisible();
+  await expect(page.locator("canvas")).toHaveCount(0);
+});
+
 test("FAIL-005: WebGL 上下文丢失后保留 2D", async ({ page }) => {
   await page.goto(route);
-  await page.getByRole("button", { name: "启动 3D" }).click();
+  await page.getByRole("button", { name: "启动动物细胞 3D" }).click();
   await expect(page.locator('[data-view="3d"]')).toBeVisible({ timeout: 15_000 });
 
   await page.locator('[data-testid="cell-3d-canvas"]').dispatchEvent(
@@ -188,7 +459,7 @@ test("FAIL-005: WebGL 上下文丢失后保留 2D", async ({ page }) => {
   await expect(page.locator('[data-fact-id="CELL-NUCLEUS-001"]')).toBeVisible();
 });
 
-test("FAIL-010: 核心页面运行期间不请求境外域名", async ({ page }) => {
+test("FAIL-010: 核心页面和详细 3D 运行期间不请求境外域名", async ({ page }) => {
   const unexpectedDomains = new Set<string>();
   page.on("request", (request) => {
     const url = new URL(request.url());
@@ -198,6 +469,22 @@ test("FAIL-010: 核心页面运行期间不请求境外域名", async ({ page })
   await page.goto(route);
   await page.getByRole("button", { name: /细胞核/ }).click();
   await expect(page.locator('[data-selected-structure="nucleus"]')).toBeVisible();
+  await page.getByRole("button", { name: "启动动物细胞 3D" }).click();
+  await expect(page.getByText("3D 视图")).toBeVisible({
+    timeout: 15_000,
+  });
+
+  await page.getByRole("button", { name: "神经元", exact: true }).click();
+  await expect(
+    page.locator('[data-model-id="neuron"][data-view="3d"]'),
+  ).toBeVisible({ timeout: 15_000 });
+
+  await page
+    .getByRole("button", { name: "细菌细胞壁", exact: true })
+    .click();
+  await expect(
+    page.locator('[data-model-id="bacteria-wall"][data-view="3d"]'),
+  ).toBeVisible({ timeout: 15_000 });
 
   expect([...unexpectedDomains]).toEqual([]);
 });

@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Noto_Sans_SC } from "next/font/google";
+import { Inter, Noto_Sans_SC } from "next/font/google";
 import "./globals.css";
 import "./editorial.css";
 
@@ -8,6 +8,12 @@ const notoSans = Noto_Sans_SC({
   display: "swap",
   preload: false,
   variable: "--font-sans",
+});
+
+const inter = Inter({
+  subsets: ["latin"],
+  display: "swap",
+  variable: "--font-inter",
 });
 
 export const metadata: Metadata = {
@@ -23,7 +29,7 @@ export default function RootLayout({
   return (
     <html
       lang="zh-CN"
-      className={notoSans.variable}
+      className={`${notoSans.variable} ${inter.variable}`}
       data-scroll-behavior="smooth"
     >
       <body>{children}</body>

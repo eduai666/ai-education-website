@@ -1,17 +1,16 @@
 import {
-  AmbientLight,
+  ACESFilmicToneMapping,
   Box3,
-  Box3Helper,
-  CapsuleGeometry,
   Color,
   DirectionalLight,
   Group,
+  HemisphereLight,
   Mesh,
-  MeshPhongMaterial,
+  MeshBasicMaterial,
+  MeshStandardMaterial,
   PerspectiveCamera,
   Raycaster,
   Scene,
-  SphereGeometry,
   SRGBColorSpace,
   TorusGeometry,
   Vector2,
@@ -22,7 +21,17 @@ import {
   type Object3D,
 } from "three";
 import { OrbitControls } from "three/addons/controls/OrbitControls.js";
-import type { CellSceneConfig, CellSceneStats, CellStructureId } from "./types";
+import {
+  getCellModelDefinition,
+  type CellModelId,
+} from "./cell-model-catalog";
+import { loadDetailedCellModel } from "./cell-three-model";
+import {
+  CELL_STRUCTURE_IDS,
+  type CellSceneConfig,
+  type CellSceneStats,
+  type CellStructureId,
+} from "./types";
 
 type CellSceneHooks = {
   onSelect: (id: CellStructureId | null) => void;
@@ -37,10 +46,16 @@ export type CellSceneController = {
 };
 
 export class CellSceneMountError extends Error {
-  code: "webgl2-unavailable" | "scene-mount-failed";
+  code:
+    | "webgl2-unavailable"
+    | "model-load-failed"
+    | "scene-mount-failed";
 
   constructor(
-    code: "webgl2-unavailable" | "scene-mount-failed",
+    code:
+      | "webgl2-unavailable"
+      | "model-load-failed"
+      | "scene-mount-failed",
     message: string,
   ) {
     super(message);
@@ -50,26 +65,40 @@ export class CellSceneMountError extends Error {
 }
 
 const membraneId: CellStructureId = "cell-membrane";
-const nucleusId: CellStructureId = "nucleus";
-const mitochondrionId: CellStructureId = "mitochondrion";
+const structureIds = new Set<string>(CELL_STRUCTURE_IDS);
 
 function getStructureId(object: Object3D) {
   let current: Object3D | null = object;
 
   while (current) {
-    const id = current.userData.structureId as CellStructureId | undefined;
-    if (id) return id;
+    const id = current.userData.structureId as unknown;
+    if (typeof id === "string" && structureIds.has(id)) {
+      return id as CellStructureId;
+    }
     current = current.parent;
   }
 
   return null;
 }
 
-export function mountCellScene(
+function blocksMembranePick(object: Object3D) {
+  let current: Object3D | null = object;
+
+  while (current) {
+    if (current.userData.cellPickBehavior === "block-membrane") return true;
+    current = current.parent;
+  }
+
+  return false;
+}
+
+export async function mountCellScene(
   canvas: HTMLCanvasElement,
   config: CellSceneConfig,
+  modelId: CellModelId,
   hooks: CellSceneHooks,
-): CellSceneController {
+  signal?: AbortSignal,
+): Promise<CellSceneController> {
   let disposed = false;
   let contextLost = false;
   let controls: OrbitControls | null = null;
@@ -203,6 +232,8 @@ export function mountCellScene(
 
     renderer.setPixelRatio(config.initialDpr);
     renderer.outputColorSpace = SRGBColorSpace;
+    renderer.toneMapping = ACESFilmicToneMapping;
+    renderer.toneMappingExposure = getCellModelDefinition(modelId).exposure;
     renderer.setClearColor(0x000000, 0);
 
     const scene = new Scene();
@@ -215,18 +246,39 @@ export function mountCellScene(
     );
     camera.position.set(...config.camera.position);
 
-    const modelRoot = new Group();
-    modelRoot.rotation.set(...config.modelRotation);
+    let detailedModel;
+    try {
+      detailedModel = await loadDetailedCellModel(
+        modelId,
+        ownGeometry,
+        ownMaterial,
+        signal,
+      );
+      if (signal?.aborted) {
+        throw signal.reason ?? new DOMException("Scene load aborted.", "AbortError");
+      }
+    } catch (error) {
+      if (signal?.aborted) throw error;
+      throw new CellSceneMountError(
+        "model-load-failed",
+        error instanceof Error ? error.message : "Unable to load cell model.",
+      );
+    }
+    const modelRoot = detailedModel.root;
     scene.add(modelRoot);
+    const supportsStructureInteraction = modelId === "animal-cell";
 
     const structureGroups = new Map<CellStructureId, Group[]>();
-    const structureMaterials = new Map<CellStructureId, MeshPhongMaterial[]>();
+    const structureMaterials = new Map<
+      CellStructureId,
+      MeshStandardMaterial[]
+    >();
     const structureBaseScales = new Map<Group, Vector3>();
 
     const registerStructure = (
       id: CellStructureId,
       group: Group,
-      materials: MeshPhongMaterial[],
+      materials: MeshStandardMaterial[],
     ) => {
       group.userData.structureId = id;
       group.traverse((object) => {
@@ -240,135 +292,57 @@ export function mountCellScene(
       ]);
     };
 
-    const cytoplasmMaterial = ownMaterial(
-      new MeshPhongMaterial({
-        color: 0xb8e8df,
-        transparent: true,
-        opacity: 0.2,
-        depthWrite: false,
-        shininess: 30,
-      }),
-    );
-    const cytoplasm = new Mesh(
-      ownGeometry(new SphereGeometry(2.14, 32, 20)),
-      cytoplasmMaterial,
-    );
-    cytoplasm.scale.set(1.16, 0.88, 1);
-    modelRoot.add(cytoplasm);
-
-    const membraneGroup = new Group();
-    const membraneMaterial = ownMaterial(
-      new MeshPhongMaterial({
-        color: 0x65d7c4,
-        transparent: true,
-        opacity: 0.28,
-        depthWrite: false,
-        shininess: 80,
-      }),
-    );
-    const membrane = new Mesh(
-      ownGeometry(new SphereGeometry(2.26, 36, 24)),
-      membraneMaterial,
-    );
-    membrane.scale.set(1.16, 0.88, 1);
-    membraneGroup.add(membrane);
-    modelRoot.add(membraneGroup);
-    registerStructure(membraneId, membraneGroup, [membraneMaterial]);
-
-    const nucleusGroup = new Group();
-    nucleusGroup.position.set(-0.48, 0.28, 0.12);
-    const nucleusMaterial = ownMaterial(
-      new MeshPhongMaterial({
-        color: 0x9a7be4,
-        shininess: 55,
-      }),
-    );
-    const nucleolusMaterial = ownMaterial(
-      new MeshPhongMaterial({
-        color: 0x5f409b,
-        shininess: 45,
-      }),
-    );
-    const nucleus = new Mesh(
-      ownGeometry(new SphereGeometry(0.72, 28, 20)),
-      nucleusMaterial,
-    );
-    const nucleolus = new Mesh(
-      ownGeometry(new SphereGeometry(0.2, 18, 12)),
-      nucleolusMaterial,
-    );
-    nucleolus.position.set(-0.2, 0.16, 0.54);
-    nucleusGroup.add(nucleus, nucleolus);
-    modelRoot.add(nucleusGroup);
-    registerStructure(nucleusId, nucleusGroup, [
-      nucleusMaterial,
-      nucleolusMaterial,
-    ]);
-
-    const mitochondrionBodyGeometry = ownGeometry(
-      new CapsuleGeometry(0.3, 0.82, 6, 12),
-    );
-    const cristaGeometry = ownGeometry(new TorusGeometry(0.17, 0.025, 6, 16));
-    const mitochondrionMaterial = ownMaterial(
-      new MeshPhongMaterial({
-        color: 0xf58e5e,
-        shininess: 60,
-      }),
-    );
-    const cristaMaterial = ownMaterial(
-      new MeshPhongMaterial({
-        color: 0xffe5c9,
-        shininess: 30,
-      }),
-    );
-
-    const createMitochondrion = (
-      position: [number, number, number],
-      rotation: [number, number, number],
-      scale: number,
-    ) => {
-      const group = new Group();
-      group.position.set(...position);
-      group.rotation.set(...rotation);
-      group.scale.setScalar(scale);
-
-      const body = new Mesh(mitochondrionBodyGeometry, mitochondrionMaterial);
-      group.add(body);
-
-      for (const y of [-0.27, 0, 0.27]) {
-        const crista = new Mesh(cristaGeometry, cristaMaterial);
-        crista.position.y = y;
-        crista.rotation.x = Math.PI / 2;
-        group.add(crista);
+    if (supportsStructureInteraction) {
+      for (const structure of detailedModel.structures) {
+        registerStructure(structure.id, structure.group, structure.materials);
       }
-
-      modelRoot.add(group);
-      registerStructure(mitochondrionId, group, [
-        mitochondrionMaterial,
-        cristaMaterial,
-      ]);
-    };
-
-    createMitochondrion([0.88, -0.5, 0.5], [0.18, 0.25, 1.08], 1);
-    createMitochondrion([1.02, 0.68, -0.38], [-0.08, -0.45, 0.86], 0.72);
+    }
 
     const selectionBounds = new Box3();
-    const selectionHelper = new Box3Helper(
-      selectionBounds,
-      new Color(0xfdfcf5),
-    );
-    selectionHelper.visible = false;
-    scene.add(selectionHelper);
+    const selectionCenter = new Vector3();
+    const selectionSize = new Vector3();
+    const selectionHalos = supportsStructureInteraction
+      ? (() => {
+          const geometry = ownGeometry(new TorusGeometry(1, 0.026, 10, 72));
+          const material = ownMaterial(
+            new MeshBasicMaterial({
+              color: 0xffffff,
+              transparent: true,
+              opacity: 0.92,
+              depthTest: false,
+              depthWrite: false,
+              toneMapped: false,
+            }),
+          );
 
-    const ambientLight = new AmbientLight(0xffffff, 1.7);
-    const keyLight = new DirectionalLight(0xffffff, 2.4);
+          return Array.from({ length: 3 }, () => {
+            const halo = new Mesh(geometry, material);
+            halo.visible = false;
+            halo.renderOrder = 100;
+            scene.add(halo);
+            return halo;
+          });
+        })()
+      : [];
+
+    const orientSelectionHalos = () => {
+      for (const halo of selectionHalos) {
+        if (halo.visible) halo.quaternion.copy(camera.quaternion);
+      }
+    };
+
+    const hemisphereLight = new HemisphereLight(0xf3ffff, 0x153743, 2.1);
+    const keyLight = new DirectionalLight(0xffffff, 3.2);
     keyLight.position.set(4, 5, 7);
-    const fillLight = new DirectionalLight(0x8ddfd2, 1.3);
+    const fillLight = new DirectionalLight(0x75cfe4, 1.55);
     fillLight.position.set(-4, -1, 3);
-    scene.add(ambientLight, keyLight, fillLight);
+    const rimLight = new DirectionalLight(0xffbd8f, 1.35);
+    rimLight.position.set(1, -4, -5);
+    scene.add(hemisphereLight, keyLight, fillLight, rimLight);
 
     render = () => {
       if (disposed || contextLost || !renderer) return;
+      orientSelectionHalos();
       renderer.render(scene, camera);
     };
 
@@ -399,11 +373,14 @@ export function mountCellScene(
     resizeObserver = observer;
     observer.observe(canvas);
 
-    const originalEmissive = new Map<MeshPhongMaterial, Color>();
+    const originalEmissive = new Map<MeshStandardMaterial, Color>();
+    const originalEmissiveIntensity = new Map<MeshStandardMaterial, number>();
+    const selectionGlow = new Color(0xf5fffd);
     for (const materials of structureMaterials.values()) {
       for (const material of materials) {
         if (!originalEmissive.has(material)) {
           originalEmissive.set(material, material.emissive.clone());
+          originalEmissiveIntensity.set(material, material.emissiveIntensity);
         }
       }
     }
@@ -423,21 +400,41 @@ export function mountCellScene(
         for (const material of structureMaterials.get(id) ?? []) {
           const baseEmissive = originalEmissive.get(material);
           if (baseEmissive) material.emissive.copy(baseEmissive);
-          material.emissiveIntensity = isSelected ? 0.55 : 1;
-          if (isSelected) material.emissive.set(0x253c43);
+          material.emissiveIntensity =
+            originalEmissiveIntensity.get(material) ?? 0;
+          if (isSelected) {
+            material.emissive.copy(material.color).lerp(selectionGlow, 0.16);
+            material.emissiveIntensity += 0.2;
+          }
         }
       }
 
+      for (const halo of selectionHalos) halo.visible = false;
       if (selectedId) {
         const selectedGroups = structureGroups.get(selectedId) ?? [];
-        selectionBounds.makeEmpty();
         scene.updateMatrixWorld(true);
-        for (const group of selectedGroups) {
-          selectionBounds.expandByObject(group);
+        selectedGroups.slice(0, selectionHalos.length).forEach((group, index) => {
+          selectionBounds.setFromObject(group);
+          if (selectionBounds.isEmpty()) return;
+
+          selectionBounds.getCenter(selectionCenter);
+          selectionBounds.getSize(selectionSize);
+          const radius = Math.max(
+            selectionSize.x,
+            selectionSize.y,
+            selectionSize.z,
+          ) * (selectedId === membraneId ? 0.52 : 0.56);
+          const halo = selectionHalos[index];
+          halo.position.copy(selectionCenter);
+          halo.scale.setScalar(Math.max(radius, 0.18));
+          halo.visible = true;
+        });
+      }
+
+      if (selectedId === membraneId) {
+        for (const halo of selectionHalos.slice(1)) {
+          halo.visible = false;
         }
-        selectionHelper.visible = !selectionBounds.isEmpty();
-      } else {
-        selectionHelper.visible = false;
       }
 
       render();
@@ -494,7 +491,12 @@ export function mountCellScene(
 
       activePointers.delete(event.pointerId);
 
-      if (shouldPick && !disposed && !contextLost) {
+      if (
+        supportsStructureInteraction &&
+        shouldPick &&
+        !disposed &&
+        !contextLost
+      ) {
         const bounds = canvas.getBoundingClientRect();
         if (bounds.width > 0 && bounds.height > 0) {
           pointer.x = ((event.clientX - bounds.left) / bounds.width) * 2 - 1;
@@ -502,13 +504,24 @@ export function mountCellScene(
           raycaster.setFromCamera(pointer, camera);
 
           const intersections = raycaster.intersectObject(modelRoot, true);
-          const hitIds = intersections
-            .map((intersection) => getStructureId(intersection.object))
-            .filter((id): id is CellStructureId => Boolean(id));
-          const selectedId =
-            hitIds.find((id) => id !== membraneId) ??
-            hitIds.find((id) => id === membraneId) ??
-            null;
+          let membraneWasHit = false;
+          let selectedId: CellStructureId | null = null;
+
+          for (const intersection of intersections) {
+            const id = getStructureId(intersection.object);
+
+            if (id && id !== membraneId) {
+              selectedId = id;
+              break;
+            }
+            if (blocksMembranePick(intersection.object)) {
+              membraneWasHit = false;
+              break;
+            }
+            if (id === membraneId) membraneWasHit = true;
+          }
+
+          if (!selectedId && membraneWasHit) selectedId = membraneId;
 
           hooks.onSelect(selectedId);
         }
@@ -530,18 +543,20 @@ export function mountCellScene(
       }
     };
 
-    canvas.addEventListener("pointerdown", handlePointerDown, {
-      signal: abortController.signal,
-    });
-    canvas.addEventListener("pointermove", handlePointerMove, {
-      signal: abortController.signal,
-    });
-    canvas.addEventListener("pointerup", handlePointerUp, {
-      signal: abortController.signal,
-    });
-    canvas.addEventListener("pointercancel", handlePointerCancel, {
-      signal: abortController.signal,
-    });
+    if (supportsStructureInteraction) {
+      canvas.addEventListener("pointerdown", handlePointerDown, {
+        signal: abortController.signal,
+      });
+      canvas.addEventListener("pointermove", handlePointerMove, {
+        signal: abortController.signal,
+      });
+      canvas.addEventListener("pointerup", handlePointerUp, {
+        signal: abortController.signal,
+      });
+      canvas.addEventListener("pointercancel", handlePointerCancel, {
+        signal: abortController.signal,
+      });
+    }
 
     resize();
 

@@ -1,7 +1,7 @@
 {
   "schemaVersion": "cell-asset-manifest.v1",
-  "demoVersion": "bio-cell-demo-v0.1",
-  "manifestVersion": "2026-07-31.1",
+  "demoVersion": "bio-cell-demo-v0.2",
+  "manifestVersion": "2026-07-31.4",
   "status": "implementation-baseline",
   "hashAlgorithm": "sha256",
   "hashEncoding": "lowercase-hex",
@@ -10,12 +10,34 @@
   "scope": "Cell-feature-specific visualization assets only. Shared site-shell assets such as the brand logo, favicon, and global font remain repository-level release responsibilities and are not claimed as audited here.",
   "runtimeAssetPolicy": {
     "networkFetchedVisualizationAssets": false,
-    "externalModels": [],
+    "externalModels": [
+      {
+        "path": "public/models/cell-architecture-studio/animal-cell-nih.glb",
+        "runtimeUrl": "/models/cell-architecture-studio/animal-cell-nih.glb",
+        "byteSize": 1526232,
+        "mime": "model/gltf-binary",
+        "sha256": "416b95d454e4243a49a530e7e9e4447d33c543e838d072ae5128c38bdad7d7c6"
+      },
+      {
+        "path": "public/models/cell-architecture-studio/neuron-nih.glb",
+        "runtimeUrl": "/models/cell-architecture-studio/neuron-nih.glb",
+        "byteSize": 2885524,
+        "mime": "model/gltf-binary",
+        "sha256": "d979bca2c94eb7b78de51bf68642ba00bf0b21d38d31161348f033c2a893a4a4"
+      },
+      {
+        "path": "public/models/cell-architecture-studio/bacteria-wall-nih.glb",
+        "runtimeUrl": "/models/cell-architecture-studio/bacteria-wall-nih.glb",
+        "byteSize": 482424,
+        "mime": "model/gltf-binary",
+        "sha256": "8c25bccaf828353ced1849483f9701266b43ae6f51899f6f6a3c45bfc7bede57"
+      }
+    ],
     "externalTextures": [],
     "externalFonts": [],
     "externalDecoders": [],
     "remoteRuntimeUrls": [],
-    "note": "Source citations may link to external reading, but the 2D and 3D visualizations do not fetch those pages or any remote asset during the learning flow."
+    "note": "Source citations may link to external reading, but the 2D and 3D visualizations do not fetch those pages or any remote asset during the learning flow. Each selected GLB is served from this application's own public directory only after explicit user action; unselected models are not prefetched."
   },
   "generatedVisuals": [
     {
@@ -29,33 +51,33 @@
       },
       "configuration": {
         "path": "docs/markdown/生物学习/00-可复现基线/cell-demo-v1.json",
-        "byteSize": 2918,
+        "byteSize": 2916,
         "mime": "application/json",
-        "sha256": "dc868ac665b8768b2e6c944237c6840ef87a33e0794cd98d5656e97bfbacc75e"
+        "sha256": "a97b5cf520cab0b177a938858e1400257df3f9a59f2d10371ab4f60a80d23614"
       },
       "outputFiles": [],
       "provenance": "Project-authored code; no imported image or model asset.",
       "licenseNote": "No separate asset license applies because the visual is emitted from repository source code."
     },
     {
-      "id": "cell-3d-scene-v1",
-      "kind": "programmatic-threejs-geometry",
+      "id": "cell-3d-scene-v3",
+      "kind": "local-glb-with-programmatic-material-and-semantic-hotspots",
       "source": {
-        "path": "src/features/cell-architecture/cell-three-runtime.ts",
-        "byteSize": 16493,
-        "mime": "application/typescript",
-        "sha256": "ec2869caa9e105d219acd2881151f5227037ac442975a0a8689912cfe21767a5"
+        "path": "public/models/cell-architecture-studio/animal-cell-nih.glb",
+        "byteSize": 1526232,
+        "mime": "model/gltf-binary",
+        "sha256": "416b95d454e4243a49a530e7e9e4447d33c543e838d072ae5128c38bdad7d7c6"
       },
       "configuration": {
-        "path": "docs/markdown/生物学习/00-可复现基线/cell-demo-v1.json",
-        "byteSize": 2918,
-        "mime": "application/json",
-        "sha256": "dc868ac665b8768b2e6c944237c6840ef87a33e0794cd98d5656e97bfbacc75e"
+        "path": "src/features/cell-architecture/cell-three-model.ts",
+        "byteSize": 9514,
+        "mime": "application/typescript",
+        "sha256": "665ad649642c500b8741c76c66a069da4d8614eb14107c4e7c3212ebb192ab3a"
       },
       "fixedSeed": "CELL-DEMO-20260731",
       "outputFiles": [],
-      "provenance": "Project-authored procedural scene using Three.js primitives; no imported GLB, image, HDR, font, or decoder asset.",
-      "licenseNote": "No separate model asset license applies; the Three.js code dependency is recorded below."
+      "provenance": "Three GLBs were copied byte-for-byte from Cell Architecture Studio commit 1cab982e7a0f96af854a696430c0724707764358: NIH 3D animal cell entry 3DPX-015797 version 2, neuron entry 3DPX-015796 version 2, and Gram-positive cell-wall entry 3DPX-010752 version 2. Runtime code recomputes missing normals, applies local studio materials, and adds project-authored semantic hotspots only to the animal-cell teaching view; no texture, HDR, font, or external decoder is used.",
+      "licenseNote": "NIH 3D entries 3DPX-015797 version 2 and 3DPX-015796 version 2 display CC BY-NC-SA 4.0. Entry 3DPX-010752 version 2 is marked Public Domain and links to CC0 1.0. Cell Architecture Studio code is MIT-licensed, Copyright (c) 2026 cclank."
     }
   ],
   "thirdPartyCode": [
@@ -63,13 +85,75 @@
       "package": "three",
       "version": "0.185.1",
       "license": "MIT",
-      "purpose": "Browser-side procedural 3D rendering",
+      "purpose": "Browser-side GLB loading, material adaptation, and demand rendering",
       "versionEvidence": "package-lock.json"
+    },
+    {
+      "package": "cell-architecture-studio",
+      "version": "1cab982e7a0f96af854a696430c0724707764358",
+      "license": "MIT",
+      "copyright": "Copyright (c) 2026 cclank",
+      "purpose": "Fixed GLB source and studio-material implementation reference",
+      "versionEvidence": "https://github.com/cclank/cell-architecture-studio/tree/1cab982e7a0f96af854a696430c0724707764358"
+    }
+  ],
+  "thirdPartyAssets": [
+    {
+      "id": "nih-3d-animal-cell-3dpx-015797-v2",
+      "localPath": "public/models/cell-architecture-studio/animal-cell-nih.glb",
+      "sourceFile": "https://github.com/cclank/cell-architecture-studio/blob/1cab982e7a0f96af854a696430c0724707764358/public/models/animal-cell-nih.glb",
+      "originalEntry": "https://3d.nih.gov/entries/3DPX-015797/2",
+      "license": "CC BY-NC-SA 4.0",
+      "byteSize": 1526232,
+      "sha256": "416b95d454e4243a49a530e7e9e4447d33c543e838d072ae5128c38bdad7d7c6",
+      "geometry": {
+        "meshes": 1,
+        "vertices": 42168,
+        "triangles": 84906,
+        "materials": 0,
+        "textures": 0,
+        "animations": 0
+      }
+    },
+    {
+      "id": "nih-3d-neuron-3dpx-015796-v2",
+      "localPath": "public/models/cell-architecture-studio/neuron-nih.glb",
+      "sourceFile": "https://github.com/cclank/cell-architecture-studio/blob/1cab982e7a0f96af854a696430c0724707764358/public/models/neuron-nih.glb",
+      "originalEntry": "https://3d.nih.gov/entries/3DPX-015796/2",
+      "license": "CC BY-NC-SA 4.0",
+      "byteSize": 2885524,
+      "sha256": "d979bca2c94eb7b78de51bf68642ba00bf0b21d38d31161348f033c2a893a4a4",
+      "geometry": {
+        "meshes": 1,
+        "vertices": 80130,
+        "triangles": 160256,
+        "materials": 0,
+        "textures": 0,
+        "animations": 0
+      }
+    },
+    {
+      "id": "nih-3d-gram-positive-cell-wall-3dpx-010752-v2",
+      "localPath": "public/models/cell-architecture-studio/bacteria-wall-nih.glb",
+      "sourceFile": "https://github.com/cclank/cell-architecture-studio/blob/1cab982e7a0f96af854a696430c0724707764358/public/models/bacteria-wall-nih.glb",
+      "originalEntry": "https://3d.nih.gov/entries/3DPX-010752/2",
+      "license": "CC0 1.0",
+      "byteSize": 482424,
+      "sha256": "8c25bccaf828353ced1849483f9701266b43ae6f51899f6f6a3c45bfc7bede57",
+      "geometry": {
+        "meshes": 1,
+        "vertices": 14572,
+        "triangles": 25542,
+        "materials": 0,
+        "textures": 0,
+        "animations": 0
+      }
     }
   ],
   "budgets": {
-    "maximumTriangles": 50000,
-    "maximumDrawCalls": 30,
+    "maximumTriangles": 170000,
+    "maximumDrawCalls": 12,
+    "maximumModelBytes": 3000000,
     "maximumTextureEdgePixels": 1024,
     "maximumCanvasCount": 1,
     "initialDpr": 1,

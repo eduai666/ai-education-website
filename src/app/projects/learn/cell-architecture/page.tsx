@@ -4,6 +4,7 @@ import Link from "next/link";
 import { DocumentationShell } from "@/components/layout/documentation-shell";
 import { AiDecisionLab } from "@/features/cell-architecture/ai-decision-lab";
 import { CellArchitectureExplorer } from "@/features/cell-architecture/cell-architecture-explorer";
+import { CellObservationChallenge } from "@/features/cell-architecture/cell-observation-challenge";
 import {
   cellAiFixture,
   cellDemo,
@@ -13,7 +14,7 @@ import styles from "@/features/cell-architecture/cell-architecture.module.css";
 export const metadata: Metadata = {
   title: "细胞结构探索器｜AI 基础教育",
   description:
-    "用完整的二维知识卡和按需加载的轻量三维模型，学习细胞膜、细胞核和线粒体，并练习核验 AI 建议。",
+    "先用动物细胞学习细胞膜、细胞核和线粒体，再按需切换神经元与细菌细胞壁三维标本进行形态比较。",
 };
 
 const activePath = "/projects/learn/cell-architecture";
@@ -21,6 +22,7 @@ const activePath = "/projects/learn/cell-architecture";
 const sections = [
   { id: "observe", label: "观察细胞" },
   { id: "facts", label: "核验事实" },
+  { id: "challenge", label: "观察挑战" },
   { id: "ai-audit", label: "判断 AI 建议" },
   { id: "workflow", label: "学习流程" },
   { id: "sources", label: "来源与边界" },
@@ -73,71 +75,61 @@ export default function CellArchitecturePage() {
         { label: "细胞结构探索器" },
       ]}
       sections={sections}
+      variant="workspace"
     >
       <article className={styles.projectPage}>
         <header className={styles.hero}>
           <div className={styles.heroContent}>
-            <div className={styles.heroStatusRow}>
-              <span className={styles.heroStatus}>可复现设计原型 · v0.1</span>
-              <span className={styles.heroStatusMuted}>10—14 岁 · 三个结构</span>
-            </div>
-            <p className={styles.heroEyebrow}>AI × 生物学习实验</p>
-            <h1>看见一颗细胞，也看见 AI 建议怎样被人检查</h1>
+            <p className={styles.heroEyebrow}>生物观察工作台</p>
+            <h1>看见一颗细胞</h1>
             <p className={styles.heroLead}>
-              从完整的二维知识卡开始，再按需打开轻量 3D。你不仅要找到细胞膜、细胞核和线粒体，还要判断 AI 的建议是否值得采用。
+              先用动物细胞完成细胞膜、细胞核与线粒体任务，再切换神经元和细菌细胞壁作形态比较。
             </p>
-            <div className={styles.heroActions}>
-              <a className={styles.heroPrimaryAction} href="#observe">
-                开始观察
-              </a>
-              <a className={styles.heroSecondaryAction} href="#ai-audit">
-                先看 AI 任务
-              </a>
-            </div>
           </div>
 
-          <div className={styles.heroGraphic} aria-hidden="true">
-            <div className={styles.heroCell}>
-              <span className={styles.heroNucleus} />
-              <span className={styles.heroMitochondrion} />
-              <span className={styles.heroOrbit}>01</span>
-              <span className={styles.heroOrbit}>02</span>
-              <span className={styles.heroOrbit}>03</span>
+          <dl className={styles.workbenchSummary}>
+            <div>
+              <dt>模型</dt>
+              <dd>3 个标本</dd>
             </div>
-            <p>2D 是基础路径<br />3D 是增强工具</p>
+            <div>
+              <dt>任务</dt>
+              <dd>结构与功能</dd>
+            </div>
+            <div>
+              <dt>视图</dt>
+              <dd>2D / 3D</dd>
+            </div>
+            <div>
+              <dt>课程</dt>
+              <dd>10—14 岁</dd>
+            </div>
+          </dl>
+
+          <div
+            className={styles.structureStrip}
+            aria-label="动物细胞课程观察结构"
+          >
+            <span className={styles.structureStripLabel}>动物细胞课程结构</span>
+            {cellDemo.structures.map((structure) => (
+              <span key={structure.id}>
+                <i
+                  style={
+                    { "--structure-color": structure.color } as CSSProperties
+                  }
+                />
+                {structure.name}
+                <small>{structure.englishName}</small>
+              </span>
+            ))}
+            <strong>v0.2 · 本地运行</strong>
           </div>
         </header>
 
-        <div className={styles.projectPrinciples} aria-label="项目约束">
-          <div>
-            <strong>0</strong>
-            <span>实时 AI 依赖</span>
-          </div>
-          <div>
-            <strong>3</strong>
-            <span>固定结构</span>
-          </div>
-          <div>
-            <strong>1</strong>
-            <span>按需 Canvas</span>
-          </div>
-          <div>
-            <strong>本地</strong>
-            <span>核心课程内容</span>
-          </div>
-        </div>
-
-        <section className={styles.section} id="observe">
-          <div className={styles.sectionHeading}>
-            <span>01 · OBSERVE</span>
-            <div>
-              <h2>先用 2D 完成任务，再决定是否需要 3D</h2>
-              <p>
-                选择结构后，图形、稳定 ID 和知识卡会同步变化。3D 只在主动点击后加载，失败时不会丢失学习内容。
-              </p>
-            </div>
-          </div>
-
+        <section
+          className={`${styles.section} ${styles.observeSection}`}
+          id="observe"
+        >
           <CellArchitectureExplorer
             structures={cellDemo.structures}
             scene={cellDemo.scene}
@@ -147,12 +139,10 @@ export default function CellArchitecturePage() {
 
         <section className={styles.section} id="facts">
           <div className={styles.sectionHeading}>
-            <span>02 · VERIFY</span>
+            <span>结构笔记</span>
             <div>
-              <h2>三张卡，都要能追到事实来源</h2>
-              <p>
-                下面的内容来自版本化事实文件。当前实现已对照公开教材，正式课堂发布前仍需由生物教师终审。
-              </p>
+              <h2>动物细胞的三个结构，一张观察表</h2>
+              <p>每条说明都能追到公开教材；先看主要功能，需要时再展开答案。</p>
             </div>
           </div>
 
@@ -175,8 +165,10 @@ export default function CellArchitecturePage() {
                     <span>{structure.factId}</span>
                   </div>
                   <h3>{structure.name}</h3>
-                  <p className={styles.factEnglishName}>{structure.englishName}</p>
-                  <p>{structure.summary}</p>
+                  <p className={styles.factEnglishName}>
+                    {structure.englishName}
+                  </p>
+                  <p className={styles.factSummary}>{structure.summary}</p>
 
                   <div className={styles.observationPrompt}>
                     <span>OBS-001</span>
@@ -200,42 +192,51 @@ export default function CellArchitecturePage() {
             })}
           </div>
 
-          <aside className={styles.modelLimitations}>
-            <div>
-              <span>MODEL NOTE</span>
-              <h3>这个模型故意没有“做得很真”</h3>
-            </div>
+          <details className={styles.modelLimitations}>
+            <summary>模型与真实细胞有哪些差异？</summary>
             <ul>
               {cellDemo.modelLimitations.map((limitation) => (
                 <li key={limitation}>{limitation}</li>
               ))}
             </ul>
-          </aside>
+          </details>
         </section>
 
-        <section className={styles.section} id="ai-audit">
-          <div className={styles.sectionHeading}>
-            <span>03 · DECIDE</span>
-            <div>
-              <h2>AI 给的是候选方案，不是最终决定</h2>
-              <p>
-                先独立选择“采用、修改或拒绝”，再打开项目记录比较理由。这里使用本地合成 fixture，不发送任何学生信息，也不会实时调用模型。
-              </p>
+        <div className={styles.lessonColumns}>
+          <section className={styles.section} id="challenge">
+            <div className={styles.sectionHeading}>
+              <span>观察练习</span>
+              <div>
+                <h2>把动物细胞的结构和功能对应起来</h2>
+                <p>独立完成三道题，再根据反馈订正到 3/3。</p>
+              </div>
             </div>
-          </div>
 
-          <AiDecisionLab
-            fixtureId={cellAiFixture.fixtureId}
-            summary={cellAiFixture.parsed.summary}
-            suggestions={cellAiFixture.parsed.suggestions}
-          />
-        </section>
+            <CellObservationChallenge structures={cellDemo.structures} />
+          </section>
+
+          <section className={styles.section} id="ai-audit">
+            <div className={styles.sectionHeading}>
+              <span>建议核验</span>
+              <div>
+                <h2>AI 建议由人来判断</h2>
+                <p>选择采用、修改或拒绝，再比较项目记录中的理由。</p>
+              </div>
+            </div>
+
+            <AiDecisionLab
+              fixtureId={cellAiFixture.fixtureId}
+              summary={cellAiFixture.parsed.summary}
+              suggestions={cellAiFixture.parsed.suggestions}
+            />
+          </section>
+        </div>
 
         <section className={styles.section} id="workflow">
           <div className={styles.sectionHeading}>
-            <span>04 · BUILD</span>
+            <span>学习记录</span>
             <div>
-              <h2>孩子真正练习的是一条可检查的 AI 协作链</h2>
+              <h2>一条可以回头检查的学习路径</h2>
               <p>
                 每一步都有输入、产物和通过条件；页面只是其中一个结果，需求卡、事实表和测试证据同样重要。
               </p>
@@ -269,7 +270,7 @@ export default function CellArchitecturePage() {
 
         <section className={styles.section} id="sources">
           <div className={styles.sectionHeading}>
-            <span>05 · TRACE</span>
+            <span>方法与来源</span>
             <div>
               <h2>来源、版本和未完成事项都公开写明</h2>
               <p>
@@ -285,7 +286,7 @@ export default function CellArchitecturePage() {
             </div>
             <div>
               <span>运行时资源</span>
-              <strong>程序化模型 · 无外部 GLB/纹理</strong>
+              <strong>3 个本地 GLB · 只加载当前标本</strong>
             </div>
             <div>
               <span>AI 状态</span>
@@ -301,13 +302,30 @@ export default function CellArchitecturePage() {
                   <span>{source.organization}</span>
                 </div>
                 <p>
-                  {source.edition} · {source.section} · 访问于 {source.accessedAt} · {source.license}
+                  {source.edition} · {source.section} · 访问于{" "}
+                  {source.accessedAt} · {source.license}
                 </p>
                 <a href={source.url} rel="noreferrer">
                   查看原始资料
                 </a>
               </li>
             ))}
+            <li>
+              <div>
+                <strong>Cell Architecture Studio / NIH 3D</strong>
+                <span>三个精细三维标本</span>
+              </div>
+              <p>
+                固定提交 1cab982 · 动物细胞 84,906、神经元 160,256、细菌细胞壁
+                25,542 个三角形 · 本地按选择逐个加载
+              </p>
+              <a
+                href="https://github.com/cclank/cell-architecture-studio/tree/1cab982e7a0f96af854a696430c0724707764358/public/models"
+                rel="noreferrer"
+              >
+                查看固定模型目录
+              </a>
+            </li>
           </ol>
 
           <div className={styles.nextStep}>

@@ -14,6 +14,7 @@ type DocumentationShellProps = {
   breadcrumbs: Breadcrumb[];
   children: ReactNode;
   sections: PageSection[];
+  variant?: "reading" | "workspace";
 };
 
 export function DocumentationShell({
@@ -21,9 +22,10 @@ export function DocumentationShell({
   breadcrumbs,
   children,
   sections,
+  variant = "reading",
 }: DocumentationShellProps) {
   return (
-    <div className="page-shell">
+    <div className={variant === "workspace" ? "page-shell workspace-shell" : "page-shell"}>
       <header className="topbar">
         <Link className="brand" href="/" aria-label="返回网站首页">
           <Image
@@ -47,12 +49,12 @@ export function DocumentationShell({
             <span className="mobile-navigation-label-phone">目录与导航</span>
           </summary>
           <div className="mobile-navigation-panel">
-            <SiteNavigation activePath={activePath} />
             {sections.length ? (
               <div className="mobile-on-this-page">
                 <OnThisPage sections={sections} />
               </div>
             ) : null}
+            <SiteNavigation activePath={activePath} />
           </div>
         </details>
       </header>

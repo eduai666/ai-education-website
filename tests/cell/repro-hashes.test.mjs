@@ -22,6 +22,33 @@ const baselineDirectory = resolve(
   "docs/markdown/生物学习/00-可复现基线",
 );
 
+const expectedThirdPartyModels = [
+  {
+    id: "nih-3d-animal-cell-3dpx-015797-v2",
+    path: "public/models/cell-architecture-studio/animal-cell-nih.glb",
+    byteSize: 1_526_232,
+    sha256: "416b95d454e4243a49a530e7e9e4447d33c543e838d072ae5128c38bdad7d7c6",
+    triangles: 84_906,
+    license: "CC BY-NC-SA 4.0",
+  },
+  {
+    id: "nih-3d-neuron-3dpx-015796-v2",
+    path: "public/models/cell-architecture-studio/neuron-nih.glb",
+    byteSize: 2_885_524,
+    sha256: "d979bca2c94eb7b78de51bf68642ba00bf0b21d38d31161348f033c2a893a4a4",
+    triangles: 160_256,
+    license: "CC BY-NC-SA 4.0",
+  },
+  {
+    id: "nih-3d-gram-positive-cell-wall-3dpx-010752-v2",
+    path: "public/models/cell-architecture-studio/bacteria-wall-nih.glb",
+    byteSize: 482_424,
+    sha256: "8c25bccaf828353ced1849483f9701266b43ae6f51899f6f6a3c45bfc7bede57",
+    triangles: 25_542,
+    license: "CC0 1.0",
+  },
+];
+
 async function readJson(path) {
   return JSON.parse(await readFile(path, "utf8"));
 }
@@ -48,7 +75,7 @@ test("BUILD-001: versioned reproducibility inputs match their raw-byte SHA-256 v
   );
 });
 
-test("ASSET-001: programmatic visuals are local, traceable, and declare no remote runtime assets", async () => {
+test("ASSET-001: local visuals are traceable and declare no remote runtime assets", async () => {
   const assetManifestPath = resolve(baselineDirectory, "asset-manifest.json");
   const [assetManifest, packageJson] = await Promise.all([
     readJson(assetManifestPath),
@@ -56,14 +83,13 @@ test("ASSET-001: programmatic visuals are local, traceable, and declare no remot
   ]);
 
   assert.equal(assetManifest.schemaVersion, "cell-asset-manifest.v1");
-  assert.equal(assetManifest.demoVersion, "bio-cell-demo-v0.1");
+  assert.equal(assetManifest.demoVersion, "bio-cell-demo-v0.2");
   assert.equal(
     assetManifest.runtimeAssetPolicy.networkFetchedVisualizationAssets,
     false,
   );
 
   for (const field of [
-    "externalModels",
     "externalTextures",
     "externalFonts",
     "externalDecoders",
@@ -71,10 +97,22 @@ test("ASSET-001: programmatic visuals are local, traceable, and declare no remot
   ]) {
     assert.deepEqual(assetManifest.runtimeAssetPolicy[field], []);
   }
+  assert.deepEqual(
+    assetManifest.runtimeAssetPolicy.externalModels.map((model) => ({
+      path: model.path,
+      byteSize: model.byteSize,
+      sha256: model.sha256,
+    })),
+    expectedThirdPartyModels.map(({ path, byteSize, sha256 }) => ({
+      path,
+      byteSize,
+      sha256,
+    })),
+  );
 
   assert.deepEqual(
     assetManifest.generatedVisuals.map((visual) => visual.id),
-    ["cell-2d-diagram-v1", "cell-3d-scene-v1"],
+    ["cell-2d-diagram-v1", "cell-3d-scene-v3"],
   );
 
   for (const visual of assetManifest.generatedVisuals) {
@@ -101,6 +139,26 @@ test("ASSET-001: programmatic visuals are local, traceable, and declare no remot
   assert.ok(threeRecord, "Three.js must have a provenance record.");
   assert.equal(packageJson.dependencies.three, threeRecord.version);
   assert.equal(threeRecord.license, "MIT");
+  assert.equal(assetManifest.thirdPartyAssets.length, 3);
+  for (const expected of expectedThirdPartyModels) {
+    const asset = assetManifest.thirdPartyAssets.find(
+      (candidate) => candidate.id === expected.id,
+    );
+    assert.ok(asset, `${expected.id} must have a provenance record.`);
+    assert.equal(asset.localPath, expected.path);
+    assert.equal(asset.byteSize, expected.byteSize);
+    assert.equal(asset.sha256, expected.sha256);
+    assert.equal(asset.geometry.triangles, expected.triangles);
+    assert.equal(asset.license, expected.license);
+
+    const assetPath = resolve(repositoryRoot, asset.localPath);
+    const bytes = await readFile(assetPath);
+    assert.equal(bytes.byteLength, expected.byteSize);
+    assert.equal(await sha256File(assetPath), expected.sha256);
+  }
+  assert.equal(assetManifest.budgets.maximumTriangles, 170_000);
+  assert.equal(assetManifest.budgets.maximumDrawCalls, 12);
+  assert.equal(assetManifest.budgets.maximumModelBytes, 3_000_000);
   assert.equal(
     assetManifest.performanceEvidence.lowEndDeviceClaim,
     "pending-manual-real-device-test",
@@ -124,7 +182,7 @@ test("BUILD-001: verifier detects drift and explicit update repairs only the sel
     `${JSON.stringify(
       {
         schemaVersion: "cell-repro-inputs.v1",
-        demoVersion: "bio-cell-demo-v0.1",
+        demoVersion: "bio-cell-demo-v0.2",
         manifestVersion: "test-only",
         hashAlgorithm: "sha256",
         hashEncoding: "lowercase-hex",
