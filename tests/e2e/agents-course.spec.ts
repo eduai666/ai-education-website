@@ -10,6 +10,20 @@ const lessons = [
   ["when-agents-should-stop", "什么时候应该让智能体停下来", 0, 1],
 ] as const;
 
+const aiBasicsLessons = [
+  "ai-around-us",
+  "how-ai-systems-learn",
+  "how-language-models-generate",
+  "context-and-memory",
+  "model-tool-use",
+  "agent-multi-step-tasks",
+  "responsible-ai-use",
+  "choosing-ai-coding-tools",
+  "cli-vs-desktop-clients",
+  "claude-code-desktop-api",
+  "codex-desktop-api",
+] as const;
+
 test("AGENT-001: 七节课程、目录、图片和内部链接完整", async ({ page }) => {
   const consoleErrors: string[] = [];
   page.on("console", (message) => {
@@ -63,7 +77,7 @@ test("AGENT-001: 七节课程、目录、图片和内部链接完整", async ({ 
 });
 
 test("AGENT-002: 课程页在手机、平板和桌面宽度没有布局回归", async ({ page }) => {
-  for (const width of [390, 900, 1440]) {
+  for (const width of [390, 900, 1023, 1024, 1280, 1439, 1440, 1920]) {
     await page.setViewportSize({ width, height: 900 });
     await page.goto("/courses/agents/agent-action-loop");
 
@@ -81,7 +95,13 @@ test("AGENT-002: 课程页在手机、平板和桌面宽度没有布局回归", 
     );
     expect(hasHorizontalOverflow, `${width}px should not overflow horizontally`).toBe(false);
 
-    if (width <= 1220) {
+    if (width < 1024) {
+      await expect(page.locator(".left-sidebar")).toBeHidden();
+    } else {
+      await expect(page.locator(".left-sidebar")).toBeVisible();
+    }
+
+    if (width < 1440) {
       await expect(page.locator(".right-sidebar")).toBeHidden();
     } else {
       await expect(page.locator(".right-sidebar")).toBeVisible();
@@ -89,18 +109,20 @@ test("AGENT-002: 课程页在手机、平板和桌面宽度没有布局回归", 
   }
 });
 
-test("AGENT-003: 手机优先显示本页目录，选择后关闭菜单", async ({ page }) => {
+test("AGENT-003: 手机菜单可访问本页目录，选择后关闭", async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 });
   await page.goto("/courses/agents/agent-action-loop");
 
   const menu = page.locator("details.mobile-navigation");
   await page.locator("details.mobile-navigation > summary").click();
   await expect(menu).toHaveAttribute("open", "");
-  await expect(menu.locator(".mobile-navigation-panel > :first-child")).toHaveClass(
-    "mobile-on-this-page",
-  );
+  await expect(menu.getByRole("navigation", { name: "网站主要板块" })).toBeVisible();
+  await expect(menu.getByRole("navigation", { name: "AI 基础目录" })).toBeVisible();
 
-  const firstOnPageLink = menu.locator(".mobile-on-this-page a").first();
+  const onThisPage = menu.getByRole("navigation", { name: "本页导航" });
+  await expect(onThisPage).toBeVisible();
+
+  const firstOnPageLink = onThisPage.getByRole("link").first();
   const expectedHash = await firstOnPageLink.getAttribute("href");
   const expectedId = expectedHash?.slice(1) ?? "";
   await firstOnPageLink.click();
@@ -140,4 +162,18 @@ test("AGENT-005: 参考答案默认折叠并可用键盘展开", async ({ page }
   await expect(answerReveal).toHaveAttribute("open", "");
   await expect(answer).toBeVisible();
   await expect(summary).toBeFocused();
+});
+
+test("AI-BASICS-001: 认识人工智能课程页不显示重复的单元课次标签", async ({ page }) => {
+  for (const slug of aiBasicsLessons) {
+    await page.goto(`/courses/ai-basics/${slug}`);
+    await expect(page.locator(".lesson-label")).toHaveCount(0);
+  }
+});
+
+test("AGENT-LABEL-001: 智能体课程页不显示重复的单元标签", async ({ page }) => {
+  for (const [slug] of lessons) {
+    await page.goto(`/courses/agents/${slug}`);
+    await expect(page.locator(".lesson-label")).toHaveCount(0);
+  }
 });

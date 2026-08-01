@@ -21,7 +21,7 @@
   "properties": {
     "schemaVersion": { "const": "cell-ai-fixture.schema.v1" },
     "fixtureId": { "const": "BIO-G3-PLAN-001" },
-    "demoVersion": { "const": "bio-cell-demo-v0.2" },
+    "demoVersion": { "const": "bio-cell-demo-v0.3" },
     "requirementsVersion": { "const": "requirements-v1" },
     "factsVersion": { "const": "facts-v1" },
     "source": { "const": "synthetic-offline-fixture" },

@@ -62,6 +62,7 @@ export default async function LessonPage({ params }: LessonPageProps) {
   return (
     <DocumentationShell
       activePath={activePath}
+      sectionId="courses"
       breadcrumbs={[
         { label: "首页", href: "/" },
         { label: "AI 基础课程", href: "/about/learning-map" },
@@ -73,9 +74,11 @@ export default async function LessonPage({ params }: LessonPageProps) {
         <ReadingTimeNote value={lesson.readingTime} />
 
         <header className="lesson-header">
-          <div className="lesson-label-row">
-            <span className="lesson-label">{lesson.chapterLabel}</span>
-          </div>
+          {lesson.chapterLabel ? (
+            <div className="lesson-label-row">
+              <span className="lesson-label">{lesson.chapterLabel}</span>
+            </div>
+          ) : null}
           <h1>{lesson.title}</h1>
           <p>{lesson.description}</p>
           <div className="lesson-meta" aria-label="课程信息">

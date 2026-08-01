@@ -14,10 +14,10 @@
   --primary-hover: #1949ad;
   --primary-soft: #edf3ff;
   --accent: #0b766e;
-  --header-height: 68px;
-  --left-width: 300px;
-  --right-width: 250px;
-  --reading-width: 780px;
+  --header-height: 60px;
+  --left-width: 304px;
+  --right-width: 248px;
+  --reading-width: 900px;
   --shadow-soft: 0 12px 30px rgba(27, 42, 75, 0.07);
 }
 

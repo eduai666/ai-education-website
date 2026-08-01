@@ -1,4 +1,5 @@
 import type { ComponentType } from "react";
+import type { NavigationSectionId } from "@/config/routes";
 
 import ProjectIntroduction from "../../../docs/markdown/网站介绍/00-项目介绍.md";
 import WhyAiLiteracy from "../../../docs/markdown/网站介绍/01-为什么现在需要AI素养教育.md";
@@ -21,7 +22,7 @@ export type SitePageEntry = {
   slug: string;
   path: string;
   navigationLabel: string;
-  groupLabel: "网站介绍" | "用户指南";
+  sectionId: NavigationSectionId;
   description: string;
   readingTime: string;
   sections: SitePageSection[];
@@ -34,7 +35,7 @@ export const sitePages: SitePageEntry[] = [
     slug: "project",
     path: "/",
     navigationLabel: "项目介绍",
-    groupLabel: "网站介绍",
+    sectionId: "about",
     description: "了解这个免费 AI 素养学习网站的目标、内容、服务人群与学习方式。",
     readingTime: "预计阅读 6 分钟",
     sections: [
@@ -52,7 +53,7 @@ export const sitePages: SitePageEntry[] = [
     slug: "why-ai-literacy",
     path: "/about/why-ai-literacy",
     navigationLabel: "为什么需要 AI 素养教育",
-    groupLabel: "网站介绍",
+    sectionId: "about",
     description: "理解 AI 时代正在形成的新信息差，以及面向学生开展 AI 素养教育的长期价值。",
     readingTime: "预计阅读 7 分钟",
     sections: [
@@ -70,7 +71,7 @@ export const sitePages: SitePageEntry[] = [
     slug: "learning-map",
     path: "/about/learning-map",
     navigationLabel: "课程与学习路线",
-    groupLabel: "网站介绍",
+    sectionId: "learning",
     description: "查看网站的课程设计原则、七个学习模块和三条推荐学习路径。",
     readingTime: "预计阅读 8 分钟",
     sections: [
@@ -88,7 +89,7 @@ export const sitePages: SitePageEntry[] = [
     slug: "vision",
     path: "/about/vision",
     navigationLabel: "学习成果与项目愿景",
-    groupLabel: "网站介绍",
+    sectionId: "about",
     description: "了解网站希望帮助学习者形成的能力、可以观察的成果和长期项目愿景。",
     readingTime: "预计阅读 6 分钟",
     sections: [
@@ -106,7 +107,7 @@ export const sitePages: SitePageEntry[] = [
     slug: "sources",
     path: "/about/sources",
     navigationLabel: "政策与资料来源",
-    groupLabel: "网站介绍",
+    sectionId: "about",
     description: "查看网站项目说明、课程设计和安全原则参考的政策及公开资料。",
     readingTime: "预计阅读 7 分钟",
     sections: [
@@ -122,7 +123,7 @@ export const sitePages: SitePageEntry[] = [
     slug: "ai-learning",
     path: "/guides/ai-learning",
     navigationLabel: "AI 学习指南",
-    groupLabel: "用户指南",
+    sectionId: "learning",
     description: "学习怎样让 AI 提供解释、提示和反馈，同时保留独立思考与核验过程。",
     readingTime: "预计阅读 9 分钟",
     sections: [
@@ -140,7 +141,7 @@ export const sitePages: SitePageEntry[] = [
     slug: "ai-creating",
     path: "/guides/ai-creating",
     navigationLabel: "AI 创作指南",
-    groupLabel: "用户指南",
+    sectionId: "learning",
     description: "从定义问题到测试迭代，学习用 AI 把想法逐步变成可以解释的作品。",
     readingTime: "预计阅读 9 分钟",
     sections: [
@@ -158,7 +159,7 @@ export const sitePages: SitePageEntry[] = [
     slug: "parents",
     path: "/guides/parents",
     navigationLabel: "家长使用指南",
-    groupLabel: "用户指南",
+    sectionId: "educators",
     description: "帮助家长理解怎样陪伴、怎样提问，以及怎样为孩子设置合理的 AI 使用边界。",
     readingTime: "预计阅读 9 分钟",
     sections: [
@@ -178,7 +179,7 @@ export const sitePages: SitePageEntry[] = [
     slug: "teachers",
     path: "/guides/teachers",
     navigationLabel: "教师使用指南",
-    groupLabel: "用户指南",
+    sectionId: "educators",
     description: "把 AI 变成可以被提问、比较和纠错的学习对象，并用于真实课堂任务。",
     readingTime: "预计阅读 10 分钟",
     sections: [
@@ -197,7 +198,7 @@ export const sitePages: SitePageEntry[] = [
     slug: "subject-examples",
     path: "/guides/subject-examples",
     navigationLabel: "学科应用案例",
-    groupLabel: "用户指南",
+    sectionId: "educators",
     description: "查看语文、数学、英语、物理等学科中可以直接改编的 AI 教学活动思路。",
     readingTime: "预计阅读 13 分钟",
     sections: [
@@ -224,7 +225,7 @@ export function getSitePage(collection: string, slug: string) {
 }
 
 export function getSiblingPages(currentPage: SitePageEntry) {
-  const siblings = sitePages.filter((page) => page.collection === currentPage.collection);
+  const siblings = sitePages.filter((page) => page.sectionId === currentPage.sectionId);
   const index = siblings.findIndex((page) => page.slug === currentPage.slug);
 
   return {

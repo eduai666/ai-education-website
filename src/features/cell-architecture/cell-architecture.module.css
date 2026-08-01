@@ -466,8 +466,25 @@
 }
 
 .cellDiagram {
-  max-height: 420px;
-  padding: 28px;
+  position: relative;
+  overflow: hidden;
+  max-height: none;
+  padding: 0;
+}
+
+.cellDiagramFallback,
+.cellDiagramOverlay,
+.cellFrontPreview {
+  position: absolute;
+  inset: 0;
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.cellDiagramFallback,
+.cellDiagramOverlay {
+  pointer-events: none;
 }
 
 .cellCanvas {
@@ -540,6 +557,54 @@
   fill: #345658;
   font-size: 13px;
   font-weight: 750;
+}
+
+.cellFrontPreview {
+  object-fit: contain;
+  pointer-events: none;
+}
+
+.frontPreviewFallback .diagramLabels {
+  display: none;
+}
+
+.frontPreviewLabels {
+  pointer-events: none;
+}
+
+.frontPreviewLabels path {
+  fill: none;
+  stroke: #315759;
+  stroke-linecap: round;
+  stroke-width: 2.5;
+}
+
+.frontPreviewLabels text {
+  fill: #183b3d;
+  font-family: var(--cell-sans);
+  font-size: 16px;
+  font-weight: 650;
+  paint-order: stroke;
+  stroke: rgba(255, 255, 255, 0.95);
+  stroke-linejoin: round;
+  stroke-width: 6px;
+}
+
+.frontPreviewStructure {
+  opacity: 0;
+  pointer-events: none;
+  transform-box: fill-box;
+  transform-origin: center;
+  transition:
+    filter 160ms ease,
+    opacity 160ms ease,
+    transform 160ms ease;
+}
+
+.frontPreviewStructureSelected {
+  filter: drop-shadow(0 0 9px rgba(18, 92, 84, 0.42));
+  opacity: 1;
+  transform: scale(1.015);
 }
 
 .loadingOverlay {
@@ -641,7 +706,7 @@
 .structureNumber {
   color: #80918f;
   font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
-  font-size: 10px;
+  font-size: 11px;
   font-weight: 800;
 }
 
@@ -1739,16 +1804,22 @@
 /* Workspace layout adapted from the information hierarchy of Cell Architecture Studio. */
 
 :global(.workspace-shell) :global(.documentation-layout) {
-  grid-template-columns: var(--left-width) minmax(0, 1fr);
+  grid-template-columns: var(--left-width) minmax(0, 1fr) var(--right-width);
 }
 
 :global(.workspace-shell) :global(.right-sidebar) {
-  display: none;
+  display: flex;
 }
 
 :global(.workspace-shell) :global(.content-column) {
   padding: 22px clamp(24px, 3vw, 48px) 80px;
-  background: #f3eee4;
+  background: #fff;
+}
+
+:global(.workspace-shell) :global(.documentation-layout),
+:global(.workspace-shell) :global(.left-sidebar),
+:global(.workspace-shell) :global(.right-sidebar) {
+  background: #fff;
 }
 
 :global(.workspace-shell) :global(.breadcrumb) {
@@ -1760,12 +1831,18 @@
   --ink: #2c2923;
   --muted: #756f66;
   --line: rgba(89, 76, 58, 0.18);
-  --paper: #fffdf8;
-  --wash: #f4efe6;
+  --paper: #fff;
+  --wash: #fff;
   --teal: #815f9c;
   --teal-dark: #604476;
   --lime: #d9c7e7;
+  --cell-serif: ui-serif, "Noto Serif SC", "Songti SC", STSong, serif;
+  --cell-sans: "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei",
+    var(--font-sans), sans-serif;
   width: min(100%, 1400px);
+  font-family: var(--cell-sans);
+  container-name: cell-workspace;
+  container-type: inline-size;
 }
 
 .hero {
@@ -1774,7 +1851,7 @@
   overflow: hidden;
   border: 1px solid var(--line);
   border-radius: 8px;
-  background: #fbf7ee;
+  background: #fff;
   box-shadow: 0 8px 26px rgba(78, 66, 48, 0.08);
   color: var(--ink);
   grid-template-columns: minmax(280px, 0.85fr) minmax(520px, 1.15fr);
@@ -1800,7 +1877,7 @@
 .hero h1 {
   max-width: none;
   color: var(--ink);
-  font-family: ui-serif, "Noto Serif SC", "Songti SC", STSong, serif;
+  font-family: var(--cell-serif);
   font-size: clamp(38px, 3.6vw, 54px);
   font-weight: 500;
   letter-spacing: -0.04em;
@@ -1818,7 +1895,7 @@
 .workbenchSummary {
   display: grid;
   min-width: 0;
-  align-self: stretch;
+  align-self: center;
   margin: 0;
   padding: 14px;
   gap: 7px;
@@ -1831,23 +1908,28 @@
   min-width: 0;
   align-content: center;
   gap: 3px;
+  min-height: 78px;
   padding: 12px;
   border: 1px solid rgba(89, 76, 58, 0.13);
-  border-radius: 5px;
-  background: rgba(255, 253, 248, 0.76);
+  border-radius: 8px;
+  background: #fff;
 }
 
 .workbenchSummary dt {
   color: #8a8175;
-  font-size: 10px;
+  font-size: 11px;
+  font-weight: 500;
+  line-height: 1.35;
 }
 
 .workbenchSummary dd {
   overflow: hidden;
   margin: 0;
   color: var(--ink);
-  font-size: 13px;
-  font-weight: 650;
+  font-family: var(--cell-serif);
+  font-size: 16px;
+  font-weight: 600;
+  line-height: 1.3;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
@@ -1868,14 +1950,14 @@
   align-items: center;
   gap: 7px;
   color: #4f4941;
-  font-size: 12px;
+  font-size: 12.5px;
   white-space: nowrap;
 }
 
 .structureStrip > .structureStripLabel {
   color: var(--teal-dark);
-  font-size: 10px;
-  font-weight: 650;
+  font-size: 11px;
+  font-weight: 600;
 }
 
 .structureStrip i,
@@ -1895,7 +1977,7 @@
 
 .structureStrip small {
   color: #918a81;
-  font-size: 9px;
+  font-size: 11px;
 }
 
 .structureStrip strong {
@@ -1937,7 +2019,7 @@
 .sectionHeading h2 {
   max-width: none;
   color: var(--ink);
-  font-family: ui-serif, "Noto Serif SC", "Songti SC", STSong, serif;
+  font-family: var(--cell-serif);
   font-size: clamp(23px, 2.2vw, 30px);
   font-weight: 520;
   letter-spacing: -0.025em;
@@ -1948,7 +2030,7 @@
   max-width: 780px;
   margin-top: 3px;
   color: var(--muted);
-  font-size: 12px;
+  font-size: 13px;
   line-height: 1.6;
 }
 
@@ -1972,15 +2054,15 @@
 .suggestionId {
   color: var(--teal);
   font-family: inherit;
-  font-size: 10px;
-  font-weight: 650;
-  letter-spacing: 0.03em;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0;
   text-transform: none;
 }
 
 .explorerTopline h2 {
   margin-top: 1px;
-  font-family: ui-serif, "Noto Serif SC", "Songti SC", STSong, serif;
+  font-family: var(--cell-serif);
   font-size: 30px;
   font-weight: 520;
   letter-spacing: -0.03em;
@@ -1990,52 +2072,51 @@
   display: grid;
   min-width: 0;
   align-items: stretch;
-  gap: 12px;
+  gap: 7px;
   padding: 9px 14px;
   border-bottom: 1px solid var(--line);
-  background: #faf6ed;
-  grid-template-columns: 154px minmax(0, 640px);
+  background: #fff;
+  grid-template-columns: 1fr;
 }
 
 .modelShelfMeta {
-  display: grid;
+  display: flex;
   min-width: 0;
-  align-content: center;
-  gap: 2px;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
 }
 
 .modelShelfMeta span {
   color: var(--teal-dark);
-  font-size: 11px;
-  font-weight: 650;
+  font-size: 12px;
+  font-weight: 600;
 }
 
 .modelShelfMeta small {
-  overflow: hidden;
   color: #8b8378;
-  font-size: 9px;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+  font-size: 11px;
+  text-align: right;
 }
 
 .modelButtons {
   display: grid;
   min-width: 0;
   gap: 5px;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-columns: repeat(5, minmax(0, 1fr));
 }
 
 .modelButton,
 .modelButtonSelected {
   display: grid;
   min-width: 0;
-  min-height: 46px;
+  min-height: 72px;
   align-content: center;
   gap: 1px;
-  padding: 6px 10px;
-  border: 1px solid transparent;
-  border-radius: 5px;
-  background: transparent;
+  padding: 9px 11px;
+  border: 1px solid rgba(89, 76, 58, 0.12);
+  border-radius: 8px;
+  background: #fff;
   color: var(--ink);
   cursor: pointer;
   text-align: left;
@@ -2051,38 +2132,45 @@
 
 .modelButtonSelected {
   border-color: rgba(96, 68, 118, 0.36);
-  background: #fffdf8;
-  box-shadow: inset 0 -2px 0 var(--teal-dark);
+  background: #fff;
+  box-shadow: none;
 }
 
 .modelButton strong,
 .modelButtonSelected strong,
 .modelButton small,
 .modelButtonSelected small {
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+  overflow-wrap: anywhere;
 }
 
 .modelButton strong,
 .modelButtonSelected strong {
-  font-size: 12px;
-  font-weight: 650;
+  font-family: var(--cell-serif);
+  font-size: 15px;
+  font-weight: 600;
+  line-height: 1.3;
 }
 
 .modelButton small,
 .modelButtonSelected small {
   color: #8a8175;
-  font-size: 9px;
+  font-size: 11px;
+  line-height: 1.4;
+}
+
+.diagramLabels text {
+  font-family: var(--cell-sans);
+  font-size: 15px;
+  font-weight: 600;
 }
 
 .primaryButton,
 .secondaryButton {
   min-height: 38px;
   padding: 7px 13px;
-  border-radius: 5px;
-  font-size: 12px;
-  font-weight: 650;
+  border-radius: 6px;
+  font-size: 13px;
+  font-weight: 600;
 }
 
 .primaryButton {
@@ -2092,7 +2180,7 @@
 
 .secondaryButton {
   border-color: var(--line);
-  background: #fffefa;
+  background: #fff;
 }
 
 .explorerGrid {
@@ -2109,20 +2197,14 @@
 
 .visualStage {
   min-height: 520px;
-  background:
-    radial-gradient(
-      circle at 48% 44%,
-      rgba(213, 229, 222, 0.68),
-      transparent 44%
-    ),
-    #f7f2e9;
+  background: #fff;
 }
 
 .visualCaption {
   min-height: 38px;
   padding: 7px 14px;
   border-color: var(--line);
-  background: #fffdf8;
+  background: #fff;
   color: #7e776e;
   font-family: inherit;
   font-size: 10px;
@@ -2141,30 +2223,39 @@
 
 .sceneBadge {
   border-color: var(--line);
-  border-radius: 5px;
-  background: rgba(255, 253, 248, 0.9);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.94);
   color: var(--ink);
-  box-shadow: 0 4px 14px rgba(78, 66, 48, 0.1);
+  box-shadow: none;
 }
 
 .sceneBadge span {
   color: var(--teal);
   font-family: inherit;
-  letter-spacing: 0.02em;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0;
+  text-transform: none;
+}
+
+.sceneBadge strong {
+  font-family: var(--cell-serif);
+  font-size: 13px;
+  font-weight: 600;
 }
 
 .structurePanel {
   min-width: 0;
   padding: 14px;
   border-right: 1px solid var(--line);
-  background: #faf6ed;
+  background: #fff;
   grid-area: structures;
 }
 
 .controlInstruction {
   margin-bottom: 11px;
-  font-size: 11px;
-  line-height: 1.55;
+  font-size: 13px;
+  line-height: 1.6;
 }
 
 .structureButtons {
@@ -2173,12 +2264,12 @@
 
 .structureButton,
 .structureButtonSelected {
-  min-height: 54px;
+  min-height: 64px;
   gap: 9px;
   padding: 9px 10px;
   border-color: transparent;
-  border-radius: 5px;
-  background: transparent;
+  border-radius: 8px;
+  background: #fff;
   grid-template-columns: 10px minmax(0, 1fr);
 }
 
@@ -2192,21 +2283,28 @@
 
 .structureButtonSelected {
   border-color: color-mix(in srgb, var(--structure-accent) 46%, var(--line));
-  background: color-mix(in srgb, var(--structure-accent) 9%, white);
-  box-shadow: inset 3px 0 0 var(--structure-accent);
+  background: #fff;
+  box-shadow: none;
+}
+
+.structureNumber {
+  font-family: var(--cell-sans);
+  font-size: 11px;
+  font-weight: 600;
 }
 
 .structureButton strong,
 .structureButtonSelected strong {
-  font-size: 13px;
-  font-weight: 650;
+  font-family: var(--cell-serif);
+  font-size: 15px;
+  font-weight: 600;
 }
 
 .structureButton small,
 .structureButtonSelected small {
   color: #918a81;
   font-family: inherit;
-  font-size: 9px;
+  font-size: 11px;
 }
 
 .comparisonSteps {
@@ -2225,12 +2323,13 @@
   gap: 8px;
   padding: 9px 10px;
   border: 1px solid rgba(89, 76, 58, 0.13);
-  border-radius: 5px;
-  background: rgba(255, 253, 248, 0.72);
+  border-radius: 8px;
+  background: #fff;
   color: #4f4941;
   counter-increment: comparison-step;
-  font-size: 11px;
-  line-height: 1.5;
+  font-family: var(--cell-serif);
+  font-size: 13px;
+  line-height: 1.55;
   grid-template-columns: 22px minmax(0, 1fr);
 }
 
@@ -2243,15 +2342,16 @@
   border-radius: 50%;
   color: var(--teal-dark);
   content: counter(comparison-step);
-  font-size: 9px;
-  font-weight: 700;
+  font-family: var(--cell-sans);
+  font-size: 10px;
+  font-weight: 600;
 }
 
 .detailPanel {
   min-width: 0;
   padding: 16px;
   border-left: 1px solid var(--line);
-  background: #fffdf8;
+  background: #fff;
   grid-area: detail;
 }
 
@@ -2271,14 +2371,14 @@
 .selectedCard h3 {
   margin: 7px 0 7px;
   color: var(--ink);
-  font-family: ui-serif, "Noto Serif SC", "Songti SC", STSong, serif;
+  font-family: var(--cell-serif);
   font-size: 28px;
   font-weight: 520;
 }
 
 .selectedCard > p {
   color: var(--muted);
-  font-size: 12px;
+  font-size: 13.5px;
   line-height: 1.7;
 }
 
@@ -2288,14 +2388,17 @@
 
 .selectedCard dt {
   color: #8d857a;
-  font-size: 9px;
-  letter-spacing: 0.03em;
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0;
   text-transform: none;
 }
 
 .selectedCard dd {
   color: #4b463f;
-  font-size: 11px;
+  font-family: var(--cell-serif);
+  font-size: 14px;
+  line-height: 1.55;
 }
 
 .comparisonReturnButton {
@@ -2304,12 +2407,12 @@
   margin-top: 14px;
   padding: 8px 10px;
   border: 1px solid var(--line);
-  border-radius: 5px;
-  background: #faf6ed;
+  border-radius: 6px;
+  background: #fff;
   color: var(--teal-dark);
   cursor: pointer;
-  font-size: 11px;
-  font-weight: 650;
+  font-size: 12px;
+  font-weight: 600;
 }
 
 .comparisonReturnButton:hover,
@@ -2359,7 +2462,16 @@
 
 .factCardHeader {
   justify-content: flex-start;
+  font-family: var(--cell-sans);
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0;
   grid-area: meta;
+}
+
+.factCardHeader span:first-child {
+  font-size: 12px;
+  font-weight: 600;
 }
 
 .factCardHeader span:last-child {
@@ -2368,7 +2480,7 @@
 
 .factCard h3 {
   margin: 3px 0 0;
-  font-family: ui-serif, "Noto Serif SC", "Songti SC", STSong, serif;
+  font-family: var(--cell-serif);
   font-size: 25px;
   font-weight: 520;
   grid-area: title;
@@ -2377,12 +2489,15 @@
 .factEnglishName {
   margin: 0 !important;
   font-family: inherit;
+  font-size: 11px !important;
+  line-height: 1.45 !important;
   grid-area: english;
 }
 
 .factSummary {
   align-self: center;
-  font-size: 13px !important;
+  font-family: var(--cell-serif);
+  font-size: 14px !important;
   line-height: 1.7 !important;
   grid-area: summary;
 }
@@ -2391,7 +2506,8 @@
   align-self: stretch;
   margin: 0;
   padding: 12px 14px;
-  border-radius: 5px;
+  border-radius: 8px;
+  border: 1px solid var(--line);
   background: var(--wash);
   grid-area: prompt;
 }
@@ -2402,11 +2518,29 @@
 
 .observationPrompt > strong {
   margin-top: 0;
+  font-family: var(--cell-serif);
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 1.6;
+}
+
+.observationPrompt details {
+  font-size: 13px;
+}
+
+.observationPrompt summary {
+  font-weight: 600;
+}
+
+.observationPrompt details p {
+  font-family: var(--cell-serif);
+  line-height: 1.65;
 }
 
 .factSource {
   align-self: end;
   margin: 0 !important;
+  font-size: 11px !important;
   grid-area: source;
 }
 
@@ -2415,8 +2549,8 @@
   margin-top: 10px;
   padding: 0;
   border: 1px solid var(--line);
-  border-radius: 6px;
-  background: rgba(255, 253, 248, 0.62);
+  border-radius: 8px;
+  background: #fff;
 }
 
 .modelLimitations > summary {
@@ -2424,15 +2558,18 @@
   padding: 11px 14px;
   color: #5f584f;
   cursor: pointer;
-  font-size: 12px;
-  font-weight: 650;
+  font-family: var(--cell-serif);
+  font-size: 14px;
+  font-weight: 600;
 }
 
 .modelLimitations ul {
   margin: 0;
   padding: 0 20px 14px 34px;
   color: var(--muted);
-  font-size: 12px;
+  font-family: var(--cell-serif);
+  font-size: 13px;
+  line-height: 1.65;
 }
 
 .lessonColumns {
@@ -2458,7 +2595,7 @@
   justify-content: flex-end;
   padding: 9px 14px;
   border-bottom-color: var(--line);
-  background: #faf6ed;
+  background: #fff;
 }
 
 .challengeHeader > div {
@@ -2472,7 +2609,7 @@
   border-radius: 0;
   background: transparent;
   color: var(--muted);
-  font-size: 10px;
+  font-size: 11px;
   font-weight: 600;
 }
 
@@ -2485,8 +2622,17 @@
 }
 
 .challengeQuestion legend {
-  font-size: 14px;
+  font-family: var(--cell-serif);
+  font-size: 15px;
+  font-weight: 600;
+  line-height: 1.55;
   grid-template-columns: 30px minmax(0, 1fr);
+}
+
+.challengeQuestion legend span {
+  font-family: var(--cell-sans);
+  font-size: 11px;
+  font-weight: 600;
 }
 
 .challengeOptions {
@@ -2498,10 +2644,49 @@
 .challengeOptionSelected,
 .challengeOptionCorrect,
 .challengeOptionWrong {
-  min-height: 58px;
-  padding: 9px 10px;
+  min-height: 64px;
+  padding: 10px 11px;
   border-color: var(--line);
-  border-radius: 5px;
+  border-radius: 8px;
+  box-shadow: none;
+}
+
+.challengeOptionSelected {
+  border-color: var(--teal-dark);
+  background: #fff;
+}
+
+.challengeOption strong,
+.challengeOptionSelected strong,
+.challengeOptionCorrect strong,
+.challengeOptionWrong strong {
+  font-family: var(--cell-serif);
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 1.4;
+}
+
+.challengeOption small,
+.challengeOptionSelected small,
+.challengeOptionCorrect small,
+.challengeOptionWrong small {
+  font-family: var(--cell-sans);
+  font-size: 11px;
+  font-weight: 400;
+  line-height: 1.35;
+}
+
+.optionResult {
+  font-size: 10px;
+  font-weight: 600;
+}
+
+.challengeFeedbackCorrect,
+.challengeFeedbackWrong {
+  border-radius: 8px;
+  font-family: var(--cell-serif);
+  font-size: 13px;
+  line-height: 1.65;
 }
 
 .challengeOption:hover,
@@ -2512,24 +2697,30 @@
 .challengeFooter {
   padding: 13px 16px;
   border-top-color: var(--line);
-  background: #faf6ed;
+  background: #fff;
 }
 
 .challengeResult strong {
   color: var(--ink);
+  font-family: var(--cell-serif);
+  font-size: 15px;
+  font-weight: 600;
 }
 
 .challengeResult span {
   color: var(--muted);
+  font-size: 12px;
 }
 
 .challengeCheckButton,
 .challengeResetButton {
   min-height: 38px;
   border-color: var(--teal-dark);
-  border-radius: 5px;
+  border-radius: 6px;
   background: var(--teal-dark);
   color: white;
+  font-size: 13px;
+  font-weight: 600;
 }
 
 .challengeCheckButton:disabled {
@@ -2546,7 +2737,7 @@
   margin: 0;
   padding: 13px 14px;
   border-bottom: 1px solid var(--line);
-  background: #faf6ed;
+  background: #fff;
 }
 
 .fixtureLabel,
@@ -2556,8 +2747,8 @@
 
 .aiLabHeader p {
   margin: 0;
-  font-size: 11px;
-  line-height: 1.55;
+  font-size: 13px;
+  line-height: 1.65;
 }
 
 .suggestionList {
@@ -2577,20 +2768,21 @@
 
 .suggestionCard h3 {
   margin: 0 0 10px;
-  font-size: 13px;
-  font-weight: 620;
-  line-height: 1.55;
+  font-family: var(--cell-serif);
+  font-size: 15px;
+  font-weight: 600;
+  line-height: 1.6;
 }
 
 .decisionButton,
 .decisionButtonSelected {
-  min-width: 58px;
-  min-height: 34px;
+  min-width: 62px;
+  min-height: 36px;
   border-color: var(--line);
-  border-radius: 4px;
-  background: #faf7f0;
-  font-size: 11px;
-  font-weight: 620;
+  border-radius: 6px;
+  background: #fff;
+  font-size: 12px;
+  font-weight: 600;
 }
 
 .decisionButtonSelected {
@@ -2599,7 +2791,19 @@
 }
 
 .referenceDecision p {
-  border-radius: 4px;
+  border-radius: 8px;
+  font-family: var(--cell-serif);
+  font-size: 13px;
+  line-height: 1.65;
+}
+
+.decisionFeedback,
+.referenceDecision {
+  font-size: 13px;
+}
+
+.referenceDecision summary {
+  font-weight: 600;
 }
 
 .workflowGrid {
@@ -2622,19 +2826,23 @@
   place-items: start;
   border-radius: 0;
   background: transparent;
-  font-family: inherit;
-  font-size: 10px;
+  font-family: var(--cell-sans);
+  font-size: 11px;
+  font-weight: 600;
 }
 
 .workflowGrid h3 {
   margin: 10px 0 4px;
-  font-size: 16px;
-  font-weight: 620;
+  font-family: var(--cell-serif);
+  font-size: 17px;
+  font-weight: 600;
+  line-height: 1.35;
 }
 
 .workflowGrid p {
-  font-size: 11px;
-  line-height: 1.6;
+  font-family: var(--cell-serif);
+  font-size: 13px;
+  line-height: 1.65;
 }
 
 .studentEvidence {
@@ -2643,7 +2851,7 @@
   padding: 18px;
   border: 1px solid var(--line);
   border-radius: 8px;
-  background: #e9e2d7;
+  background: #fff;
   color: var(--ink);
 }
 
@@ -2653,23 +2861,48 @@
   color: var(--ink);
 }
 
+.studentEvidence span,
+.sourcePanel span,
+.nextStep span {
+  font-family: var(--cell-sans);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0;
+  text-transform: none;
+}
+
 .studentEvidence h3 {
-  font-size: 17px;
+  font-family: var(--cell-serif);
+  font-size: 19px;
+  font-weight: 600;
+  line-height: 1.45;
 }
 
 .studentEvidence li {
-  font-size: 11px;
+  font-family: var(--cell-serif);
+  font-size: 13px;
+  line-height: 1.55;
 }
 
 .studentEvidence li::before {
   border-color: rgba(89, 76, 58, 0.22);
   color: var(--teal);
+  font-family: var(--cell-sans);
+  font-size: 10px;
+  font-weight: 600;
 }
 
 .sourcePanel {
   border-color: var(--line);
-  border-radius: 6px;
+  border-radius: 8px;
   background: var(--paper);
+}
+
+.sourcePanel strong {
+  font-family: var(--cell-serif);
+  font-size: 15px;
+  font-weight: 600;
+  line-height: 1.45;
 }
 
 .sourcePanel > div {
@@ -2685,17 +2918,86 @@
   border-color: var(--line);
 }
 
+.sourceList strong {
+  font-family: var(--cell-serif);
+  font-size: 15px;
+  font-weight: 600;
+}
+
+.sourceList span,
+.sourceList p,
+.sourceList a {
+  font-size: 12px;
+  line-height: 1.55;
+}
+
+.sourceList a {
+  font-weight: 600;
+}
+
 .nextStep {
   margin-top: 18px;
   padding: 18px;
   border: 1px solid var(--line);
   border-radius: 8px;
-  background: #e9e2d7;
+  background: #fff;
+}
+
+.nextStep h3 {
+  font-family: var(--cell-serif);
+  font-size: 19px;
+  font-weight: 600;
+  line-height: 1.45;
 }
 
 .nextStep a {
-  border-radius: 5px;
+  border-radius: 6px;
   background: var(--teal-dark);
+  font-weight: 600;
+}
+
+@container cell-workspace (max-width: 920px) {
+  .hero {
+    grid-template-columns: 1fr;
+  }
+
+  .workbenchSummary {
+    border-top: 1px solid var(--line);
+    border-left: 0;
+  }
+
+  .explorerGrid {
+    grid-template-areas:
+      "visual visual"
+      "structures detail";
+    grid-template-columns: minmax(220px, 0.7fr) minmax(0, 1.3fr);
+  }
+
+  .visualPanel {
+    border-bottom: 1px solid var(--line);
+  }
+
+  .structurePanel {
+    border-right: 1px solid var(--line);
+  }
+
+  .detailPanel {
+    border-left: 0;
+  }
+
+  .factCard {
+    grid-template-areas:
+      "meta prompt"
+      "title prompt"
+      "english prompt"
+      "summary summary"
+      "source source";
+    grid-template-columns: minmax(150px, 0.45fr) minmax(0, 1fr);
+  }
+
+  .lessonColumns {
+    grid-template-columns: 1fr;
+  }
 }
 
 @media (max-width: 1320px) {
@@ -2720,6 +3022,27 @@
 
   .lessonColumns {
     grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 1439px) {
+  :global(.workspace-shell) :global(.documentation-layout) {
+    grid-template-columns: var(--left-width) minmax(0, 1fr);
+  }
+
+  :global(.workspace-shell) :global(.right-sidebar) {
+    display: none;
+  }
+}
+
+@media (max-width: 1023px) {
+  :global(.workspace-shell) :global(.documentation-layout) {
+    display: block;
+    width: 100%;
+  }
+
+  :global(.workspace-shell) :global(.left-sidebar) {
+    display: none;
   }
 }
 
@@ -2806,6 +3129,18 @@
 
   .modelButtons {
     width: 100%;
+    overflow-x: auto;
+    padding-bottom: 4px;
+    grid-auto-columns: minmax(132px, 42vw);
+    grid-auto-flow: column;
+    grid-template-columns: none;
+    scroll-snap-type: x proximity;
+    scrollbar-width: thin;
+  }
+
+  .modelButton,
+  .modelButtonSelected {
+    scroll-snap-align: start;
   }
 
   .explorerGrid {
@@ -2901,19 +3236,14 @@
 
   .modelButton,
   .modelButtonSelected {
-    min-height: 44px;
-    padding: 6px;
-    text-align: center;
-  }
-
-  .modelButton small,
-  .modelButtonSelected small {
-    display: none;
+    min-height: 72px;
+    padding: 9px;
+    text-align: left;
   }
 
   .modelButton strong,
   .modelButtonSelected strong {
-    font-size: 11px;
+    font-size: 13px;
   }
 
   .structureButtons {
@@ -2922,6 +3252,10 @@
 
   .visualStage {
     min-height: 320px;
+  }
+
+  .frontPreviewLabels {
+    display: none;
   }
 
   .challengeHeader,

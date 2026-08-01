@@ -9,15 +9,20 @@ import {
   cellAiFixture,
   cellDemo,
 } from "@/features/cell-architecture/cell-content";
+import { CELL_MODEL_CATALOG } from "@/features/cell-architecture/cell-model-catalog";
 import styles from "@/features/cell-architecture/cell-architecture.module.css";
 
 export const metadata: Metadata = {
   title: "细胞结构探索器｜AI 基础教育",
   description:
-    "先用动物细胞学习细胞膜、细胞核和线粒体，再按需切换神经元与细菌细胞壁三维标本进行形态比较。",
+    "用动物细胞、植物细胞、骨骼肌细胞、神经元与细菌细胞壁的固定正视图和按需 3D 标本学习细胞结构并核验 AI 建议。",
 };
 
 const activePath = "/projects/learn/cell-architecture";
+
+const localReferenceModelsEnabled =
+  process.env.NODE_ENV === "development" &&
+  process.env.CELL_LOCAL_REFERENCE_MODELS === "1";
 
 const sections = [
   { id: "observe", label: "观察细胞" },
@@ -46,7 +51,7 @@ const workflowSteps = [
   },
   {
     id: "G4",
-    title: "先完成 2D",
+    title: "先完成静态图",
     description: "确保关闭 3D 和实时 AI 后，仍能完成全部观察问题。",
   },
   {
@@ -69,6 +74,7 @@ export default function CellArchitecturePage() {
   return (
     <DocumentationShell
       activePath={activePath}
+      sectionId="projects"
       breadcrumbs={[
         { label: "首页", href: "/" },
         { label: "实践项目" },
@@ -83,14 +89,14 @@ export default function CellArchitecturePage() {
             <p className={styles.heroEyebrow}>生物观察工作台</p>
             <h1>看见一颗细胞</h1>
             <p className={styles.heroLead}>
-              先用动物细胞完成细胞膜、细胞核与线粒体任务，再切换神经元和细菌细胞壁作形态比较。
+              先用动物细胞完成细胞膜、细胞核与线粒体任务，再切换植物细胞、骨骼肌细胞、神经元和细菌细胞壁作形态比较。
             </p>
           </div>
 
           <dl className={styles.workbenchSummary}>
             <div>
               <dt>模型</dt>
-              <dd>3 个标本</dd>
+              <dd>{CELL_MODEL_CATALOG.length} 个标本</dd>
             </div>
             <div>
               <dt>任务</dt>
@@ -98,7 +104,7 @@ export default function CellArchitecturePage() {
             </div>
             <div>
               <dt>视图</dt>
-              <dd>2D / 3D</dd>
+              <dd>静态 / 3D</dd>
             </div>
             <div>
               <dt>课程</dt>
@@ -122,7 +128,7 @@ export default function CellArchitecturePage() {
                 <small>{structure.englishName}</small>
               </span>
             ))}
-            <strong>v0.2 · 本地运行</strong>
+            <strong>v0.3 · 本地运行</strong>
           </div>
         </header>
 
@@ -134,6 +140,7 @@ export default function CellArchitecturePage() {
             structures={cellDemo.structures}
             scene={cellDemo.scene}
             initialStructureId={cellDemo.initialStructureId}
+            localReferenceModelsEnabled={localReferenceModelsEnabled}
           />
         </section>
 
@@ -286,7 +293,7 @@ export default function CellArchitecturePage() {
             </div>
             <div>
               <span>运行时资源</span>
-              <strong>3 个本地 GLB · 只加载当前标本</strong>
+              <strong>3 个本地 GLB · 2 个程序化模型</strong>
             </div>
             <div>
               <span>AI 状态</span>
@@ -312,19 +319,72 @@ export default function CellArchitecturePage() {
             ))}
             <li>
               <div>
-                <strong>Cell Architecture Studio / NIH 3D</strong>
-                <span>三个精细三维标本</span>
+                <strong>NIH 3D：Animal Cell 与 Neuron</strong>
+                <span>3DPX-015797 / 3DPX-015796 v2 · destacados tv</span>
               </div>
               <p>
-                固定提交 1cab982 · 动物细胞 84,906、神经元 160,256、细菌细胞壁
-                25,542 个三角形 · 本地按选择逐个加载
+                动物细胞、神经元的本地 GLB 来自这些条目；固定 3D 正视图由其渲染，为课堂辨识已固定机位、裁切并重新着色。原作采用 CC BY-NC-SA 4.0，衍生预览同样按该许可处理。
+                原始条目：
+                <a
+                  href="https://3d.nih.gov/entries/3DPX-015797/2"
+                  rel="noreferrer"
+                >
+                  动物细胞
+                </a>
+                、
+                <a
+                  href="https://3d.nih.gov/entries/3DPX-015796/2"
+                  rel="noreferrer"
+                >
+                  神经元
+                </a>
+                。
               </p>
               <a
-                href="https://github.com/cclank/cell-architecture-studio/tree/1cab982e7a0f96af854a696430c0724707764358/public/models"
+                href="https://creativecommons.org/licenses/by-nc-sa/4.0/"
                 rel="noreferrer"
               >
-                查看固定模型目录
+                查看 CC BY-NC-SA 4.0
               </a>
+            </li>
+            <li>
+              <div>
+                <strong>NIH 3D：Gram Positive Bacterial Cell Wall Model</strong>
+                <span>3DPX-010752 v2 · CC0 1.0 / Public Domain</span>
+              </div>
+              <p>
+                细菌细胞壁的固定正视图由本地模型渲染、裁切并教学着色。源条目由 Model3D 发布并标记为 CC0 1.0；保留其指定致谢：A.C. Vinal, Wake Technical Community College。
+              </p>
+              <a
+                href="https://3d.nih.gov/entries/3DPX-010752/2"
+                rel="noreferrer"
+              >
+                查看原始条目与致谢
+              </a>
+            </li>
+            <li>
+              <div>
+                <strong>程序化植物细胞与固定正视图</strong>
+                <span>本项目 Three.js 几何 · PlantModel 参考</span>
+              </div>
+              <p>
+                发布版本的植物模型与固定正视图均由本项目程序化生成；几何比例和布局参考 Cell Architecture Studio 固定提交 1cab982 的 MIT 许可 PlantModel。只有本机开发环境明确开启参考模型开关时，页面才会从忽略目录读取未获再分发授权的本地参考模型及其正视预览；它们不会提交、部署或发布。保留声明：Copyright (c) 2026 cclank · MIT License。
+              </p>
+              <a
+                href="https://github.com/cclank/cell-architecture-studio/tree/1cab982e7a0f96af854a696430c0724707764358"
+                rel="noreferrer"
+              >
+                查看 Cell Architecture Studio 固定提交
+              </a>
+            </li>
+            <li>
+              <div>
+                <strong>程序化骨骼肌细胞与固定正视图</strong>
+                <span>本项目模型</span>
+              </div>
+              <p>
+                发布版本的骨骼肌模型及其固定正视图均由本项目程序化生成，不包含外部参考 GLB。
+              </p>
             </li>
           </ol>
 

@@ -49,6 +49,48 @@ const expectedThirdPartyModels = [
   },
 ];
 
+const expectedFrontPreviewAssets = [
+  {
+    modelId: "animal-cell",
+    path: "public/cell-architecture/front-previews/animal-cell-front-v1.png",
+    runtimeUrl: "/cell-architecture/front-previews/animal-cell-front-v1.png",
+    byteSize: 250_134,
+    sha256: "e8ca7bd6b5c9ae2cf900043f2d59a0599cc5817c4f0401de8ddb65f28662672e",
+  },
+  {
+    modelId: "plant-cell",
+    path: "public/cell-architecture/front-previews/plant-cell-front-v1.png",
+    runtimeUrl: "/cell-architecture/front-previews/plant-cell-front-v1.png",
+    byteSize: 92_971,
+    sha256: "e5ef97ff041f86f97154fb331bec4bafe1aea84e5cf5bb3ad64c21a778098141",
+  },
+  {
+    modelId: "muscle-cell",
+    path: "public/cell-architecture/front-previews/muscle-cell-front-v1.png",
+    runtimeUrl: "/cell-architecture/front-previews/muscle-cell-front-v1.png",
+    byteSize: 96_634,
+    sha256: "56a11a357ec16a2551f7b74eeb1895c1877fe1aff543e6b797a9199c0e56c9e7",
+  },
+  {
+    modelId: "neuron",
+    path: "public/cell-architecture/front-previews/neuron-front-v1.png",
+    runtimeUrl: "/cell-architecture/front-previews/neuron-front-v1.png",
+    byteSize: 31_083,
+    sha256: "b15c14ad3f31d29c0e0784f71c7dbfab248ded43bf55ea066d3a99b0740953ef",
+  },
+  {
+    modelId: "bacteria-wall",
+    path: "public/cell-architecture/front-previews/bacteria-wall-front-v1.png",
+    runtimeUrl: "/cell-architecture/front-previews/bacteria-wall-front-v1.png",
+    byteSize: 197_903,
+    sha256: "3f6a6ee6e58cf9d42b9a6256af7acf0c45abd49da6310d9e820d183d525a3440",
+  },
+];
+
+const localReferencePreviewRoutePath =
+  "src/app/api/local-reference-cell-previews/[asset]/route.ts";
+const localReferencePreviewAsset = "plant-cell-reference-front-v1.png";
+
 async function readJson(path) {
   return JSON.parse(await readFile(path, "utf8"));
 }
@@ -63,7 +105,7 @@ test("BUILD-001: versioned reproducibility inputs match their raw-byte SHA-256 v
       .map((failure) => `${failure.path}: ${failure.reason}`)
       .join("\n"),
   );
-  assert.ok(result.checked >= 20);
+  assert.ok(result.checked >= 40);
   assert.equal(result.manifest.hashAlgorithm, "sha256");
   assert.equal(result.manifest.bytePolicy, "raw-file-bytes");
   assert.equal(
@@ -75,6 +117,47 @@ test("BUILD-001: versioned reproducibility inputs match their raw-byte SHA-256 v
   );
 });
 
+test("LOCAL-002: ignored plant reference preview remains outside release and reproducibility assets", async () => {
+  const [assetManifest, reproInputs] = await Promise.all([
+    readJson(resolve(baselineDirectory, "asset-manifest.json")),
+    readJson(defaultManifestPath),
+  ]);
+  const routeRecord = reproInputs.files.find(
+    (file) => file.path === localReferencePreviewRoutePath,
+  );
+  const declaredReleasePaths = [
+    ...assetManifest.runtimeAssetPolicy.externalModels.map(({ path }) => path),
+    ...assetManifest.generatedVisuals.flatMap((visual) =>
+      visual.outputFiles.map(({ path }) => path),
+    ),
+    ...assetManifest.thirdPartyAssets.map(({ localPath }) => localPath),
+  ];
+
+  assert.ok(routeRecord, "The local preview gate source must be hash-tracked.");
+  assert.equal(
+    routeRecord.role,
+    "development-only-local-reference-preview-gate",
+  );
+  assert.match(routeRecord.sha256, /^[0-9a-f]{64}$/u);
+  assert.equal(
+    reproInputs.files.some(
+      (file) =>
+        file.path.includes(".local-assets") ||
+        file.path.endsWith(localReferencePreviewAsset),
+    ),
+    false,
+  );
+  assert.equal(
+    declaredReleasePaths.some(
+      (path) =>
+        path.includes(".local-assets") || path.endsWith(localReferencePreviewAsset),
+    ),
+    false,
+  );
+  assert.match(assetManifest.runtimeAssetPolicy.note, /local-development preview/u);
+  assert.match(assetManifest.runtimeAssetPolicy.note, /not release assets/u);
+});
+
 test("ASSET-001: local visuals are traceable and declare no remote runtime assets", async () => {
   const assetManifestPath = resolve(baselineDirectory, "asset-manifest.json");
   const [assetManifest, packageJson] = await Promise.all([
@@ -83,7 +166,7 @@ test("ASSET-001: local visuals are traceable and declare no remote runtime asset
   ]);
 
   assert.equal(assetManifest.schemaVersion, "cell-asset-manifest.v1");
-  assert.equal(assetManifest.demoVersion, "bio-cell-demo-v0.2");
+  assert.equal(assetManifest.demoVersion, "bio-cell-demo-v0.3");
   assert.equal(
     assetManifest.runtimeAssetPolicy.networkFetchedVisualizationAssets,
     false,
@@ -112,7 +195,37 @@ test("ASSET-001: local visuals are traceable and declare no remote runtime asset
 
   assert.deepEqual(
     assetManifest.generatedVisuals.map((visual) => visual.id),
-    ["cell-2d-diagram-v1", "cell-3d-scene-v3"],
+    [
+      "cell-2d-diagram-v1",
+      "cell-3d-scene-v3",
+      "cell-3d-front-preview-v1",
+    ],
+  );
+
+  const frontPreviewVisual = assetManifest.generatedVisuals.find(
+    (visual) => visual.id === "cell-3d-front-preview-v1",
+  );
+  assert.ok(frontPreviewVisual, "Static front previews need a provenance record.");
+  assert.equal(
+    frontPreviewVisual.kind,
+    "five-fixed-camera-3d-front-preview-pngs",
+  );
+  assert.deepEqual(frontPreviewVisual.capture.viewport, {
+    width: 1440,
+    height: 1000,
+    deviceScaleFactor: 1,
+  });
+  assert.deepEqual(frontPreviewVisual.capture.outputCanvas, {
+    width: 704,
+    height: 521,
+  });
+  assert.equal(frontPreviewVisual.capture.localReferenceModels, "disabled");
+  assert.match(frontPreviewVisual.capture.server, /127\.0\.0\.1:3101/u);
+  assert.match(frontPreviewVisual.capture.sceneCamera, /no rotate or zoom gesture/u);
+  assert.match(frontPreviewVisual.capture.readiness, /canvas coordinate \(8, 8\)/u);
+  assert.match(
+    frontPreviewVisual.capture.readiness,
+    /data-selected-structure=none/u,
   );
 
   for (const visual of assetManifest.generatedVisuals) {
@@ -130,7 +243,35 @@ test("ASSET-001: local visuals are traceable and declare no remote runtime asset
       await sha256File(configurationPath),
       visual.configuration.sha256,
     );
-    assert.deepEqual(visual.outputFiles, []);
+    if (visual.id !== "cell-3d-front-preview-v1") {
+      assert.deepEqual(visual.outputFiles, []);
+    }
+  }
+
+  assert.deepEqual(
+    frontPreviewVisual.outputFiles.map(
+      ({ modelId, path, runtimeUrl, byteSize, mime, sha256 }) => ({
+        modelId,
+        path,
+        runtimeUrl,
+        byteSize,
+        mime,
+        sha256,
+      }),
+    ),
+    expectedFrontPreviewAssets.map((asset) => ({
+      ...asset,
+      mime: "image/png",
+    })),
+  );
+  for (const expected of expectedFrontPreviewAssets) {
+    const previewPath = resolve(repositoryRoot, expected.path);
+    const bytes = await readFile(previewPath);
+    assert.equal(bytes.byteLength, expected.byteSize);
+    assert.equal(await sha256File(previewPath), expected.sha256);
+    assert.deepEqual([...bytes.subarray(0, 8)], [137, 80, 78, 71, 13, 10, 26, 10]);
+    assert.equal(bytes.readUInt32BE(16), 704);
+    assert.equal(bytes.readUInt32BE(20), 521);
   }
 
   const threeRecord = assetManifest.thirdPartyCode.find(
@@ -182,7 +323,7 @@ test("BUILD-001: verifier detects drift and explicit update repairs only the sel
     `${JSON.stringify(
       {
         schemaVersion: "cell-repro-inputs.v1",
-        demoVersion: "bio-cell-demo-v0.2",
+        demoVersion: "bio-cell-demo-v0.3",
         manifestVersion: "test-only",
         hashAlgorithm: "sha256",
         hashEncoding: "lowercase-hex",

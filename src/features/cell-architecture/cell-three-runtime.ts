@@ -12,6 +12,7 @@ import {
   Raycaster,
   Scene,
   SRGBColorSpace,
+  Texture,
   TorusGeometry,
   Vector2,
   Vector3,
@@ -25,7 +26,10 @@ import {
   getCellModelDefinition,
   type CellModelId,
 } from "./cell-model-catalog";
-import { loadDetailedCellModel } from "./cell-three-model";
+import {
+  disposeCellTexture,
+  loadDetailedCellModel,
+} from "./cell-three-model";
 import {
   CELL_STRUCTURE_IDS,
   type CellSceneConfig,
@@ -98,6 +102,7 @@ export async function mountCellScene(
   modelId: CellModelId,
   hooks: CellSceneHooks,
   signal?: AbortSignal,
+  useLocalReferenceModels = false,
 ): Promise<CellSceneController> {
   let disposed = false;
   let contextLost = false;
@@ -110,6 +115,7 @@ export async function mountCellScene(
   const abortController = new AbortController();
   const ownedGeometries = new Set<BufferGeometry>();
   const ownedMaterials = new Set<Material>();
+  const ownedTextures = new Set<Texture>();
 
   const ownGeometry = <T extends BufferGeometry>(geometry: T) => {
     ownedGeometries.add(geometry);
@@ -119,6 +125,11 @@ export async function mountCellScene(
   const ownMaterial = <T extends Material>(material: T) => {
     ownedMaterials.add(material);
     return material;
+  };
+
+  const ownTexture = <T extends Texture>(texture: T) => {
+    ownedTextures.add(texture);
+    return texture;
   };
 
   const handleContextLost = (event: Event) => {
@@ -181,8 +192,12 @@ export async function mountCellScene(
     for (const material of ownedMaterials) {
       runCleanupStep(() => material.dispose());
     }
+    for (const texture of ownedTextures) {
+      runCleanupStep(() => disposeCellTexture(texture));
+    }
     ownedGeometries.clear();
     ownedMaterials.clear();
+    ownedTextures.clear();
 
     if (mountedScene) {
       mountedScene.clear();
@@ -253,6 +268,7 @@ export async function mountCellScene(
         ownGeometry,
         ownMaterial,
         signal,
+        useLocalReferenceModels,
       );
       if (signal?.aborted) {
         throw signal.reason ?? new DOMException("Scene load aborted.", "AbortError");
@@ -265,8 +281,10 @@ export async function mountCellScene(
       );
     }
     const modelRoot = detailedModel.root;
+    for (const texture of detailedModel.textures) ownTexture(texture);
     scene.add(modelRoot);
-    const supportsStructureInteraction = modelId === "animal-cell";
+    const supportsStructureInteraction =
+      getCellModelDefinition(modelId).interaction === "course-structures";
 
     const structureGroups = new Map<CellStructureId, Group[]>();
     const structureMaterials = new Map<
@@ -573,6 +591,7 @@ export async function mountCellScene(
         return {
           drawCalls: renderer?.info.render.calls ?? 0,
           triangles: renderer?.info.render.triangles ?? 0,
+          source: detailedModel.renderSource,
         };
       },
       dispose() {

@@ -7,7 +7,7 @@
     "node": "24.13.0"
   },
   "scripts": {
-    "dev": "next dev",
+    "dev": "next dev --hostname 127.0.0.1",
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
@@ -17,7 +17,8 @@
     "test:e2e": "playwright test",
     "verify": "npm run test:data && npm run typecheck && npm run lint && npm run build",
     "verify:full": "npm run verify && npm run test:e2e",
-    "repro:check": "node scripts/cell-repro-hashes.mjs --check"
+    "repro:check": "node scripts/cell-repro-hashes.mjs --check",
+    "render:cell-previews": "node scripts/render-cell-front-previews.mjs"
   },
   "dependencies": {
     "@mdx-js/loader": "^3.1.1",

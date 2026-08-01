@@ -18,7 +18,7 @@
   ],
   "properties": {
     "schemaVersion": { "const": "cell-demo.schema.v1" },
-    "demoVersion": { "const": "bio-cell-demo-v0.2" },
+    "demoVersion": { "const": "bio-cell-demo-v0.3" },
     "requirementsVersion": { "const": "requirements-v1" },
     "factsVersion": { "const": "facts-v1" },
     "contentReviewStatus": {

@@ -22,7 +22,7 @@ export const defaultManifestPath = resolve(
 
 const expectedManifestFields = {
   schemaVersion: "cell-repro-inputs.v1",
-  demoVersion: "bio-cell-demo-v0.2",
+  demoVersion: "bio-cell-demo-v0.3",
   hashAlgorithm: "sha256",
   hashEncoding: "lowercase-hex",
   pathBase: "repository-root",

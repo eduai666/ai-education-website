@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { ReadingTimeNote } from "@/components/content/reading-time-note";
 import { DocumentationShell } from "@/components/layout/documentation-shell";
+import { getNavigationSection } from "@/config/routes";
 import { getSiblingPages, type SitePageEntry } from "@/server/content/site-pages";
 
 type SiteContentPageProps = {
@@ -10,14 +11,15 @@ type SiteContentPageProps = {
 export function SiteContentPage({ page }: SiteContentPageProps) {
   const Content = page.Content;
   const { previous, next } = getSiblingPages(page);
-  const groupHref = page.collection === "about" ? "/" : "/guides/ai-learning";
+  const section = getNavigationSection(page.sectionId);
 
   return (
     <DocumentationShell
       activePath={page.path}
+      sectionId={page.sectionId}
       breadcrumbs={[
         { label: "首页", href: "/" },
-        { label: page.groupLabel, href: groupHref },
+        { label: section.label, href: section.href },
         { label: page.navigationLabel },
       ]}
       sections={page.sections}

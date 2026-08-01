@@ -50,7 +50,7 @@ export type CellSceneConfig = {
 
 export type CellDemoContent = {
   schemaVersion: "cell-demo.schema.v1";
-  demoVersion: "bio-cell-demo-v0.2";
+  demoVersion: "bio-cell-demo-v0.3";
   requirementsVersion: "requirements-v1";
   factsVersion: "facts-v1";
   contentReviewStatus: "pending-teacher-approval" | "teacher-approved";
@@ -74,7 +74,7 @@ export type AiSuggestion = {
 export type CellAiFixture = {
   schemaVersion: "cell-ai-fixture.schema.v1";
   fixtureId: "BIO-G3-PLAN-001";
-  demoVersion: "bio-cell-demo-v0.2";
+  demoVersion: "bio-cell-demo-v0.3";
   requirementsVersion: "requirements-v1";
   factsVersion: "facts-v1";
   source: "synthetic-offline-fixture";
@@ -100,4 +100,5 @@ export type CellAiFixture = {
 export type CellSceneStats = {
   drawCalls: number;
   triangles: number;
+  source: "glb" | "procedural";
 };

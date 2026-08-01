@@ -236,7 +236,7 @@ test("UI-002/PERF-001: 精细 GLB 只在主动启动后加载并可确定性复�
   await expect(sceneStats).toHaveText(sceneStatsText);
 });
 
-test("UI-005/PERF-002: 三个模型按选择逐个请求并隔离动物细胞结构", async ({
+test("UI-005/PERF-002: 五个模型先显示独立 2D，再按需启动 3D", async ({
   page,
 }) => {
   const requestedModels = new Set<string>();
@@ -248,65 +248,126 @@ test("UI-005/PERF-002: 三个模型按选择逐个请求并隔离动物细胞结
   await page.goto(route);
   await page.waitForLoadState("networkidle");
 
-  const animalButton = page.getByRole("button", {
-    name: "动物细胞",
-    exact: true,
-  });
-  const neuronButton = page.getByRole("button", {
-    name: "神经元",
-    exact: true,
-  });
-  const bacteriaButton = page.getByRole("button", {
-    name: "细菌细胞壁",
-    exact: true,
-  });
+  for (const selector of [
+    "html",
+    "body",
+    ".documentation-layout",
+    ".left-sidebar",
+    ".right-sidebar",
+    ".content-column",
+  ]) {
+    await expect(page.locator(selector)).toHaveCSS(
+      "background-color",
+      "rgb(255, 255, 255)",
+    );
+  }
+
+  const models = [
+    { id: "animal-cell", name: "动物细胞" },
+    { id: "plant-cell", name: "植物细胞" },
+    { id: "muscle-cell", name: "肌肉细胞" },
+    { id: "neuron", name: "神经元" },
+    { id: "bacteria-wall", name: "细菌细胞壁" },
+  ] as const;
   const animalStructureControls = page.getByRole("group", {
     name: "选择动物细胞结构",
   });
   const sceneStats = page.getByTestId("scene-stats");
 
-  await expect(animalButton).toHaveAttribute("aria-pressed", "true");
-  await expect(neuronButton).toHaveAttribute("aria-pressed", "false");
-  await expect(bacteriaButton).toHaveAttribute("aria-pressed", "false");
-  await expect(animalStructureControls).toBeVisible();
+  for (const model of models) {
+    const button = page.getByRole("button", {
+      name: model.name,
+      exact: true,
+    });
+    await button.click();
+    await expect(
+      page.locator(
+        `[data-model-id="${model.id}"][data-view="2d"]`,
+      ),
+    ).toBeVisible();
+    await expect(
+      page.locator(`[data-diagram-model="${model.id}"]`),
+    ).toBeVisible();
+    await expect(button).toHaveAttribute("aria-pressed", "true");
+    expect([...requestedModels]).toEqual([]);
+  }
+
+  await page.getByRole("button", { name: "植物细胞", exact: true }).click();
+  await expect(page.getByText("并非所有植物细胞都有叶绿体")).toBeVisible();
+  await page.getByRole("button", { name: "启动植物细胞 3D" }).click();
+  await expect(
+    page.locator('[data-model-id="plant-cell"][data-view="3d"]'),
+  ).toBeVisible({ timeout: 15_000 });
+  await expect(sceneStats).toContainText(
+    "12 draw calls · 14,100 triangles",
+  );
   expect([...requestedModels]).toEqual([]);
+  await expect(page.locator("canvas")).toHaveCount(1);
+  await page.getByRole("button", { name: "返回植物细胞 2D" }).click();
+  await expect(page.locator('[data-diagram-model="plant-cell"]')).toBeVisible();
 
-  await page.getByRole("button", { name: "启动动物细胞 3D" }).click();
+  await page.getByRole("button", { name: "肌肉细胞", exact: true }).click();
+  await expect(page.getByText("不能代表心肌或平滑肌")).toBeVisible();
+  await page.getByRole("button", { name: "启动肌肉细胞 3D" }).click();
   await expect(
-    page.locator('[data-model-id="animal-cell"][data-view="3d"]'),
+    page.locator('[data-model-id="muscle-cell"][data-view="3d"]'),
   ).toBeVisible({ timeout: 15_000 });
-  await expect.poll(() => [...requestedModels]).toEqual([modelUrls.animal]);
+  await expect(sceneStats).toContainText(
+    "12 draw calls · 3,864 triangles",
+  );
+  expect([...requestedModels]).toEqual([]);
+  await page.getByRole("button", { name: "返回肌肉细胞 2D" }).click();
 
-  await neuronButton.click();
-  await expect(
-    page.locator('[data-model-id="neuron"][data-view="3d"]'),
-  ).toBeVisible({ timeout: 15_000 });
-  await expect(neuronButton).toHaveAttribute("aria-pressed", "true");
-  await expect(animalButton).toHaveAttribute("aria-pressed", "false");
-  await expect.poll(() => [...requestedModels]).toEqual([
-    modelUrls.animal,
-    modelUrls.neuron,
-  ]);
-  await expect(sceneStats).toContainText("160,256 triangles");
-  await expect(animalStructureControls).toHaveCount(0);
-  await expect(
-    page.locator('[data-selected-structure="not-applicable"]'),
-  ).toBeVisible();
-  await expect(page.getByText("自由观察 · 暂无结构热点")).toBeVisible();
+  const glbModels = [
+    {
+      id: "animal-cell",
+      name: "动物细胞",
+      url: modelUrls.animal,
+      triangles: "86,346 triangles",
+    },
+    {
+      id: "neuron",
+      name: "神经元",
+      url: modelUrls.neuron,
+      triangles: "160,256 triangles",
+    },
+    {
+      id: "bacteria-wall",
+      name: "细菌细胞壁",
+      url: modelUrls.bacteriaWall,
+      triangles: "25,542 triangles",
+    },
+  ] as const;
 
-  await bacteriaButton.click();
-  await expect(
-    page.locator('[data-model-id="bacteria-wall"][data-view="3d"]'),
-  ).toBeVisible({ timeout: 15_000 });
-  await expect(bacteriaButton).toHaveAttribute("aria-pressed", "true");
-  await expect(neuronButton).toHaveAttribute("aria-pressed", "false");
-  await expect.poll(() => [...requestedModels]).toEqual([
+  for (const model of glbModels) {
+    await page
+      .getByRole("button", { name: model.name, exact: true })
+      .click();
+    await expect(
+      page.locator(`[data-diagram-model="${model.id}"]`),
+    ).toBeVisible();
+    await page
+      .getByRole("button", { name: `启动${model.name} 3D` })
+      .click();
+    await expect(
+      page.locator(
+        `[data-model-id="${model.id}"][data-view="3d"]`,
+      ),
+    ).toBeVisible({ timeout: 15_000 });
+    await expect.poll(() => [...requestedModels]).toContain(model.url);
+    await expect(sceneStats).toContainText(model.triangles);
+    await page
+      .getByRole("button", { name: `返回${model.name} 2D` })
+      .click();
+  }
+
+  expect([...requestedModels]).toEqual([
     modelUrls.animal,
     modelUrls.neuron,
     modelUrls.bacteriaWall,
   ]);
-  await expect(sceneStats).toContainText("25,542 triangles");
-  await expect(animalStructureControls).toHaveCount(0);
+  await page.getByRole("button", { name: "动物细胞", exact: true }).click();
+  await expect(animalStructureControls).toBeVisible();
 });
 
 test("FAIL-011: 快速切换会中止旧模型且不回写过期场景", async ({ page }) => {
@@ -329,10 +390,14 @@ test("FAIL-011: 快速切换会中止旧模型且不回写过期场景", async (
   try {
     await page.goto(route);
     await page.getByRole("button", { name: "神经元", exact: true }).click();
+    await page.getByRole("button", { name: "启动神经元 3D" }).click();
     await expect.poll(() => neuronRequestSeen).toBe(true);
 
     await page
       .getByRole("button", { name: "细菌细胞壁", exact: true })
+      .click();
+    await page
+      .getByRole("button", { name: "启动细菌细胞壁 3D" })
       .click();
     await expect(
       page.locator('[data-model-id="bacteria-wall"][data-view="3d"]'),
@@ -475,6 +540,7 @@ test("FAIL-010: 核心页面和详细 3D 运行期间不请求境外域名", asy
   });
 
   await page.getByRole("button", { name: "神经元", exact: true }).click();
+  await page.getByRole("button", { name: "启动神经元 3D" }).click();
   await expect(
     page.locator('[data-model-id="neuron"][data-view="3d"]'),
   ).toBeVisible({ timeout: 15_000 });
@@ -482,8 +548,23 @@ test("FAIL-010: 核心页面和详细 3D 运行期间不请求境外域名", asy
   await page
     .getByRole("button", { name: "细菌细胞壁", exact: true })
     .click();
+  await page
+    .getByRole("button", { name: "启动细菌细胞壁 3D" })
+    .click();
   await expect(
     page.locator('[data-model-id="bacteria-wall"][data-view="3d"]'),
+  ).toBeVisible({ timeout: 15_000 });
+
+  await page.getByRole("button", { name: "植物细胞", exact: true }).click();
+  await page.getByRole("button", { name: "启动植物细胞 3D" }).click();
+  await expect(
+    page.locator('[data-model-id="plant-cell"][data-view="3d"]'),
+  ).toBeVisible({ timeout: 15_000 });
+
+  await page.getByRole("button", { name: "肌肉细胞", exact: true }).click();
+  await page.getByRole("button", { name: "启动肌肉细胞 3D" }).click();
+  await expect(
+    page.locator('[data-model-id="muscle-cell"][data-view="3d"]'),
   ).toBeVisible({ timeout: 15_000 });
 
   expect([...unexpectedDomains]).toEqual([]);

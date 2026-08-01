@@ -6,11 +6,12 @@
 
 | 项目 | 值 |
 | --- | --- |
-| 演示版本 | `bio-cell-demo-v0.2` |
+| 演示版本 | `bio-cell-demo-v0.3` |
 | 路由 | `/projects/learn/cell-architecture` |
 | 内容版本 | `cell-demo.schema.v1` |
 | AI fixture | `BIO-G3-PLAN-001` |
 | 结构 ID | `cell-membrane`、`nucleus`、`mitochondrion` |
+| 标本 ID | `animal-cell`、`plant-cell`、`muscle-cell`、`neuron`、`bacteria-wall` |
 | 状态值 | `未执行`、`通过`、`失败`、`不适用` |
 
 只有报告中同时保存了输入清单哈希、源代码提交、环境和原始证据，才能把状态标为“通过”。视频、截图和浏览器跟踪中不得包含学生姓名、账号、声音、照片或学校信息。
@@ -23,6 +24,7 @@
 | `BUILD-001` | `npm run repro:check` | 固定输入的原始字节 SHA-256 与清单一致 | 干净 clone 已成功构建 |
 | `FAIL-001` | `tests/e2e/cell-architecture.spec.ts` | 生产服务器上关闭 JavaScript 后仍可读取 2D 学习内容 | OSS 静态导出已通过 |
 | `UI-001`、`UI-004` | 同上 | 桌面浏览器中的鼠标、Enter 键与状态同步 | 真实触屏设备已通过 |
+| `UI-005`、`PERF-002` | 同上 | 五个标本先显示各自 2D 且不提前请求 GLB；三项本地 GLB 与两项程序化 3D 只在显式操作后启动 | 五个模型的生物内容已经过教师终审或低端真机体验达标 |
 | `UI-002`、`PERF-001` | 同上 | 3D 按需加载、复位、单 Canvas，并在一次桌面 Chromium 基线中检查 draw calls、triangles 与 3D 增量传输硬上限 | 2D 传输目标、三次冷/热缓存、真机帧率或低端机体验已达标 |
 | `FAIL-002`、`FAIL-003`、`FAIL-005`、`FAIL-010` | 同上 | WebGL2 不可用、3D chunk 持续 12 秒未返回、上下文丢失和页面运行时请求域名的自动化基线 | 404、损坏资源、CORS 错误，或全部运营商、地域和真实弱网都已验证 |
 

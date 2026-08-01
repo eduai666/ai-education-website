@@ -44,32 +44,21 @@ type CellArchitectureExplorerProps = {
   structures: CellStructure[];
   scene: CellSceneConfig;
   initialStructureId: CellStructureId;
+  localReferenceModelsEnabled: boolean;
 };
 
 const errorMessages: Record<ExplorerError, string> = {
   "webgl2-unavailable":
-    "这台设备不能建立 WebGL2 场景，已保留完整的 2D 学习内容。",
-  "context-lost": "3D 图形上下文已经中断，已安全返回 2D。你可以稍后重新尝试。",
-  "scene-load-timeout": "3D 组件加载超时，已安全返回 2D。请检查网络后再试。",
+    "这台设备不能建立 WebGL2 场景，已保留固定正视图与完整学习内容。",
+  "context-lost": "3D 图形上下文已经中断，已安全返回固定正视图。你可以稍后重新尝试。",
+  "scene-load-timeout": "3D 组件加载超时，已安全返回固定正视图。请检查网络后再试。",
   "model-load-failed":
-    "精细 3D 模型没有成功加载，已安全返回 2D。你可以稍后重新尝试。",
-  "scene-mount-failed": "3D 场景没有成功启动，已保留完整的 2D 学习内容。",
+    "精细 3D 模型没有成功加载，已安全返回固定正视图。你可以稍后重新尝试。",
+  "scene-mount-failed": "3D 场景没有成功启动，已保留固定正视图与完整学习内容。",
 };
 
 const sceneLoadTimeoutMs = 12_000;
 const courseModelId: CellModelId = "animal-cell";
-
-function getCourseRelationship(modelId: CellModelId) {
-  if (modelId === "neuron") {
-    return "神经元也是真核细胞；这个整体形态模型不承担细胞器定位，也不参与下方三结构题。";
-  }
-
-  if (modelId === "bacteria-wall") {
-    return "这是原核生物的外层结构比较标本。细菌没有细胞核和线粒体，不能套用动物细胞的三结构按钮。";
-  }
-
-  return "细胞膜、细胞核和线粒体的结构任务只在动物细胞课程模型中进行。";
-}
 
 function subscribeToSaveData(callback: () => void) {
   const connection = (navigator as NavigatorWithConnection).connection;
@@ -122,6 +111,7 @@ export function CellArchitectureExplorer({
   structures,
   scene,
   initialStructureId,
+  localReferenceModelsEnabled,
 }: CellArchitectureExplorerProps) {
   const [activeModelId, setActiveModelId] =
     useState<CellModelId>(courseModelId);
@@ -155,7 +145,17 @@ export function CellArchitectureExplorer({
 
   const activeModel = CELL_MODEL_BY_ID[activeModelId];
   const failedModel = failedModelId ? CELL_MODEL_BY_ID[failedModelId] : null;
-  const isCourseModel = activeModelId === courseModelId;
+  const isCourseModel = activeModel.interaction === "course-structures";
+  const isUsingLocalReferenceCandidate =
+    localReferenceModelsEnabled &&
+    activeModel.source.kind === "procedural" &&
+    Boolean(activeModel.source.localReference);
+  const isUsingLocalReferencePreview =
+    localReferenceModelsEnabled && activeModelId === "plant-cell";
+  const sceneBadge =
+    stats?.source === "glb" && isUsingLocalReferenceCandidate
+      ? "本地参考 GLB · 仅本机测试，未用于发布"
+      : activeModel.sceneBadge;
   const selectedStructure = useMemo(
     () => structures.find((structure) => structure.id === selectedId) ?? null,
     [selectedId, structures],
@@ -182,7 +182,6 @@ export function CellArchitectureExplorer({
       active = false;
       sceneAbortController.abort();
       setFailedModelId(mountedModelId);
-      setActiveModelId(courseModelId);
       setErrorReason("scene-load-timeout");
       setStats(null);
       setView("error");
@@ -206,8 +205,10 @@ export function CellArchitectureExplorer({
             },
             onContextLost: () => {
               if (!active) return;
+              active = false;
+              sceneAbortController.abort();
+              window.clearTimeout(sceneLoadTimer);
               setFailedModelId(mountedModelId);
-              setActiveModelId(courseModelId);
               setErrorReason("context-lost");
               setView("error");
               setStats(null);
@@ -215,6 +216,7 @@ export function CellArchitectureExplorer({
             },
           },
           sceneAbortController.signal,
+          localReferenceModelsEnabled,
         );
         window.clearTimeout(sceneLoadTimer);
 
@@ -234,7 +236,6 @@ export function CellArchitectureExplorer({
         if (!active) return;
         window.clearTimeout(sceneLoadTimer);
         setFailedModelId(mountedModelId);
-        setActiveModelId(courseModelId);
         setErrorReason(getMountError(error));
         setStats(null);
         setView("error");
@@ -253,7 +254,7 @@ export function CellArchitectureExplorer({
       }
       ownedController?.dispose();
     };
-  }, [activeModelId, attempt, scene]);
+  }, [activeModelId, attempt, localReferenceModelsEnabled, scene]);
 
   useEffect(() => {
     if (!isCourseModel) return;
@@ -275,15 +276,27 @@ export function CellArchitectureExplorer({
   };
 
   const selectModel = (modelId: CellModelId) => {
-    if (activeModelId === modelId && (view === "loading" || view === "3d")) {
-      return;
-    }
+    if (activeModelId === modelId && view === "2d") return;
 
-    start3d(modelId);
+    setActiveModelId(modelId);
+    setFailedModelId(null);
+    setErrorReason(null);
+    setView("2d");
+    setStats(null);
+    setAttempt(0);
   };
 
   const returnTo2d = () => {
+    setFailedModelId(null);
+    setErrorReason(null);
+    setView("2d");
+    setStats(null);
+    setAttempt(0);
+  };
+
+  const returnToCourseModel = () => {
     setActiveModelId(courseModelId);
+    setSelectedId(initialStructureId);
     setFailedModelId(null);
     setErrorReason(null);
     setView("2d");
@@ -303,15 +316,20 @@ export function CellArchitectureExplorer({
       ? `正在加载${activeModel.name}`
       : view === "3d"
         ? `${activeModel.name}已加载`
-        : view === "error"
-          ? "已回到动物细胞 2D"
-          : "点击标本后按需加载";
+      : view === "error"
+          ? `${activeModel.name} 3D 未启动，已保留正视图`
+          : isUsingLocalReferencePreview
+            ? `${activeModel.name} 本机参考正视图已就绪`
+          : `${activeModel.name} 静态正视图已就绪`;
 
   return (
     <div
       className={styles.explorer}
       data-model-id={activeModelId}
       data-view={view}
+      data-local-reference-models={
+        localReferenceModelsEnabled ? "enabled" : "disabled"
+      }
     >
       <div className={styles.explorerTopline}>
         <div>
@@ -325,7 +343,7 @@ export function CellArchitectureExplorer({
               className={styles.secondaryButton}
               onClick={returnTo2d}
             >
-              返回动物细胞 2D
+              返回{activeModel.name} 2D
             </button>
           ) : (
             <button
@@ -335,7 +353,7 @@ export function CellArchitectureExplorer({
             >
               {view === "error" && failedModel
                 ? `重试${failedModel.name} 3D`
-                : "启动动物细胞 3D"}
+                : `启动${activeModel.name} 3D`}
             </button>
           )}
           {view === "3d" ? (
@@ -352,13 +370,13 @@ export function CellArchitectureExplorer({
 
       <div className={styles.modelShelf}>
         <div className={styles.modelShelfMeta}>
-          <span>三维标本</span>
+          <span>细胞标本</span>
           <small>{modelShelfStatus}</small>
         </div>
         <div
           className={styles.modelButtons}
           role="group"
-          aria-label="选择三维标本"
+          aria-label="选择细胞标本"
         >
           {CELL_MODEL_CATALOG.map((model) => {
             const isActive = activeModelId === model.id;
@@ -385,8 +403,7 @@ export function CellArchitectureExplorer({
 
       {!clientReady ? (
         <p className={styles.noScriptNotice}>
-          当前浏览器关闭了 JavaScript，因此不启动 3D；下方 2D
-          图和三条结构说明仍可完整学习。
+          当前浏览器关闭了 JavaScript，因此不启动 3D；下方固定正视图和三条结构说明仍可完整学习。
         </p>
       ) : null}
 
@@ -402,8 +419,12 @@ export function CellArchitectureExplorer({
           aria-labelledby="cell-explorer-title"
         >
           <div className={styles.visualStage}>
-            {attempt === 0 && isCourseModel ? (
-              <CellDiagram selectedId={selectedId} />
+            {attempt === 0 ? (
+              <CellDiagram
+                modelId={activeModelId}
+                selectedId={isCourseModel ? selectedId : null}
+                localReferencePreviewEnabled={isUsingLocalReferencePreview}
+              />
             ) : null}
             {attempt > 0 ? (
               <canvas
@@ -417,11 +438,7 @@ export function CellArchitectureExplorer({
             {view === "3d" ? (
               <div className={styles.sceneBadge}>
                 <span>3D 视图</span>
-                <strong>
-                  {isCourseModel
-                    ? "白色光环表示当前选择"
-                    : "自由观察 · 暂无结构热点"}
-                </strong>
+                <strong>{sceneBadge}</strong>
               </div>
             ) : null}
             {view === "loading" ? (
@@ -440,10 +457,16 @@ export function CellArchitectureExplorer({
                   : "拖动旋转 · 双指或滚轮缩放 · 比较标本不参与下方三结构题"
                 : view === "loading"
                   ? `正在准备${activeModel.name}观察场景`
-                  : "动物细胞二维基础路径始终可用"}
+                  : isUsingLocalReferencePreview
+                    ? `${activeModel.name}本机参考正视图 · 仅本地测试，不会发布`
+                    : `${activeModel.name}静态正视图始终可用`}
             </span>
             {stats ? (
-              <span className={styles.sceneStats} data-testid="scene-stats">
+              <span
+                className={styles.sceneStats}
+                data-model-source={stats.source}
+                data-testid="scene-stats"
+              >
                 {stats.drawCalls} draw calls ·{" "}
                 {stats.triangles.toLocaleString("zh-CN")} triangles
               </span>
@@ -548,13 +571,13 @@ export function CellArchitectureExplorer({
                   </div>
                   <div>
                     <dt>课程关系</dt>
-                    <dd>{getCourseRelationship(activeModelId)}</dd>
+                    <dd>{activeModel.courseRelationship}</dd>
                   </div>
                 </dl>
                 <button
                   type="button"
                   className={styles.comparisonReturnButton}
-                  onClick={returnTo2d}
+                  onClick={returnToCourseModel}
                 >
                   返回动物细胞，继续课程
                 </button>
