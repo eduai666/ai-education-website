@@ -5,6 +5,7 @@ import claudeEnableDeveloperConfirmFigure from "./assets/10-05-claude-enable-dev
 import claudeThirdPartyInferenceMenuFigure from "./assets/10-06-claude-third-party-inference-menu.png";
 import claudeGatewayConnectionFigure from "./assets/10-07-claude-gateway-connection.png";
 import claudeStaticApiKeyFigure from "./assets/10-08-claude-static-api-key.png";
+import deepseekCreateApiKeyFigure from "./assets/10-09-deepseek-create-api-key.png";
 import claudeGatewayCredentialsFigure from "./assets/10-10-claude-gateway-credentials.png";
 import claudeTierAliasFigure from "./assets/10-11-claude-tier-alias.png";
 import claudeDeepseekModelFigure from "./assets/10-12-claude-deepseek-v4-pro-model.png";
@@ -24,13 +25,27 @@ import claudeGatewayActiveFigure from "./assets/10-15-claude-gateway-active.png"
 > [!WARNING]
 > 本文涉及付费 API 和可产生费用的 API Key，更适合家长、教师、社团指导员，或由监护人陪同操作的学生。不要让未成年人独立充值、保存或传播密钥。
 
+## 费用要分开看
+
+**Claude Desktop 是免费的桌面应用**：可以免费下载、安装，并用它打开本教程中的第三方推理设置；仅为完成这里的 Gateway 配置，不需要购买 Claude 订阅。
+
+**DeepSeek API 则按实际调用收费**：创建 API Key 本身不会产生模型调用费，但 Claude Desktop 经 Gateway 向 DeepSeek 发送请求后，费用由 DeepSeek 开放平台按模型和用量从 API 余额中扣除。开始前应由成人确认余额、价格和消费上限。
+
+| 项目 | 是否是本教程的必要费用 | 由谁计费 |
+| --- | --- | --- |
+| Claude Desktop 下载、安装和 Gateway 配置 | 不收费 | 无 |
+| Claude 的付费订阅或其他 Anthropic 产品 | 不需要 | Anthropic，和本文的 DeepSeek API 无关 |
+| DeepSeek API 请求 | 需要按用量付费 | DeepSeek 开放平台 API 余额 |
+
+也就是说，Claude Desktop 是操作界面，DeepSeek API 是实际提供推理并产生用量费用的服务。Claude 订阅、DeepSeek 网页/App 会员和 DeepSeek API 余额彼此不互通。
+
 ## 开始前说明
 
 ### 准备这三样东西
 
 1. 一台 Windows 10 或 Windows 11 电脑；
 2. 当前版本的 Claude Desktop；
-3. DeepSeek 开放平台账号和可用余额。
+3. 已登录且有可用余额的 DeepSeek 开放平台账号；API 调用按用量收费，须由成人确认额度与消费上限。
 
 如果之后要在 Claude Desktop 的 `Code` 标签页中打开本地项目，还需要安装 [Git for Windows](https://git-scm.com/downloads/win)。仅完成本文的网关配置，不需要另外安装 Claude Code CLI。
 
@@ -170,13 +185,21 @@ https://api.deepseek.com/anthropic/v1/messages
   caption="先选 Static API key，密钥输入框和鉴权方式才会出现。"
 />
 
-### 步骤 7：创建 DeepSeek API Key
+### 步骤 7：登录开放平台、确认余额并创建 API Key
 
-在浏览器打开 [DeepSeek API Key 管理页面](https://platform.deepseek.com/api_keys)，点击“创建 API key”，输入一个便于识别的名称，例如 `Claude-Desktop`，然后点击“创建”。
+这里说的“获得 DeepSeek API”，实际是取得 **开放平台账号、可用 API 余额和 API Key**；它不是下载模型，也不等同于 DeepSeek 网页或 App 中的聊天额度。
 
-密钥创建后通常只会完整显示一次。点击“复制”，立即回到 Claude Desktop 粘贴到 `Gateway API key` 输入框。
+1. 打开 [DeepSeek 开放平台](https://platform.deepseek.com/)，按当前页面提示注册或登录，并确认登录的是要用于本次学习的账号。
+2. 在开放平台查看余额、价格和用量提醒。DeepSeek API 请求按用量从 API 余额中扣除；Claude 订阅、DeepSeek 网页/App 的会员与 DeepSeek API 余额彼此独立。如果余额不足或之后出现 `402`，应由家长、教师或社团指导员决定是否以小额度开通，并设置消费上限。
+3. 打开 [DeepSeek API Key 管理页面](https://platform.deepseek.com/api_keys)，点击“创建 API key”。名称只用于自己识别，例如 `Claude-Desktop`；不要填写姓名、学校或其他隐私。
 
-名称只用于自己识别用途，不要填写姓名、学校或其他隐私。开始测试前设置合理的充值额度或用量提醒；任务结束后删除不再使用的 Key。
+<CourseFigure
+  src={deepseekCreateApiKeyFigure}
+  alt="DeepSeek 开放平台 API Key 管理页中的创建 API key 窗口，名称输入框中填入示例名称，底部有取消和创建按钮"
+  caption="在已登录的 API Key 管理页中，点击创建 API key，填写一个不含个人信息的识别名称后创建。"
+/>
+
+密钥创建后通常只会完整显示一次。点击“复制”，立即回到 Claude Desktop 粘贴到 `Gateway API key` 输入框。开始测试前设置合理的消费提醒；任务结束后删除不再使用的 Key。
 
 > [!WARNING]
 > 不要把完整密钥截进教程图片。即使界面后来只显示圆点或部分字符，也要检查原始截图里是否曾出现完整 Key。
@@ -371,6 +394,8 @@ Base URL → Credential kind → API Key → x-api-key → Model ID → Test con
 ## 最后记住这几件事
 
 - 这篇教程配置的是 Claude Desktop，不是 Claude Code CLI。
+- Claude Desktop 客户端下载安装和 Gateway 配置不收费；实际推理由 DeepSeek API 提供，并按其 API 用量收费。
+- 获得 API 接入凭证的顺序是：登录开放平台 → 确认 API 余额 → 创建一次性显示的 API Key。
 - Base URL 填写 `https://api.deepseek.com/anthropic`，桌面 Gateway 路径使用 `Static API key` 和 `x-api-key`。
 - `claude-opus-4` 是路由名称，会映射到 DeepSeek V4 Pro；实际调用以官方映射和用量记录为准。
 - Test connection 成功后，还要执行 `Apply Changes → Save & Restart`。
@@ -385,6 +410,7 @@ Base URL → Credential kind → API Key → x-api-key → Model ID → Test con
 - [Claude Desktop：LLM gateway](https://claude.com/docs/third-party/claude-desktop/gateway)——用于核对 Gateway、静态 API Key、鉴权方式、Messages、流式输出和模型发现要求。
 - [Claude Code Desktop](https://code.claude.com/docs/en/desktop)——用于核对 Windows 下载、`Code` 标签页和 Git 要求。
 - [DeepSeek：Using the Anthropic API](https://api-docs.deepseek.com/guides/anthropic_api)——用于核对 Base URL、`x-api-key`、模型映射和兼容能力。
+- [DeepSeek 开放平台](https://platform.deepseek.com/)——用于登录、查看 API 余额、价格和用量信息；具体入口以平台当前页面为准。
 - [DeepSeek：Integrate with Claude Code](https://api-docs.deepseek.com/quick_start/agent_integrations/claude_code)——用于核对 Claude Code / Claude Desktop 的模型映射。
 - [DeepSeek API Key 管理](https://platform.deepseek.com/api_keys)——用于创建、轮换和删除 API Key。
 - [DeepSeek Error Codes](https://api-docs.deepseek.com/quick_start/error_codes)——用于核对鉴权、余额、限流和服务端错误码。
