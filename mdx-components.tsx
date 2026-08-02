@@ -139,6 +139,7 @@ export function useMDXComponents(components: MDXComponents): MDXComponents {
   return {
     a: MarkdownLink,
     blockquote: MarkdownBlockquote,
+    table: MarkdownTable,
     AnswerReveal,
     CourseFigure,
     ...components,

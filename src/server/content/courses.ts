@@ -17,7 +17,6 @@ import HowAgentsActStepByStep from "../../../docs/markdown/04-什么是智能体
 import AgentTaskWalkthrough from "../../../docs/markdown/04-什么是智能体/04-跟着智能体完成一次任务.md";
 import AgentsVsFixedWorkflows from "../../../docs/markdown/04-什么是智能体/05-智能体和固定工作流有什么不同.md";
 import WhenAgentsShouldStop from "../../../docs/markdown/04-什么是智能体/06-什么时候应该让智能体停下来.md";
-import type { LessonEntry } from "./course-types";
 import { largeModelLessons } from "./large-model-lessons";
 import { machineLearningLessons } from "./machine-learning-lessons";
 
@@ -190,8 +189,6 @@ export const courseLessons: LessonEntry[] = [
     ],
     Content: SafeAiUseAndHumanResponsibility,
   },
-  ...machineLearningLessons,
-  ...largeModelLessons,
   {
     chapter: "ai-basics",
     slug: "choosing-ai-coding-tools",
@@ -282,6 +279,8 @@ export const courseLessons: LessonEntry[] = [
     ],
     Content: CodexDesktopApi,
   },
+  ...machineLearningLessons,
+  ...largeModelLessons,
   {
     chapter: "agents",
     slug: "introduction",
