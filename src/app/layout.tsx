@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Inter, Noto_Sans_SC } from "next/font/google";
+import { KatexCopySupport } from "@/components/content/katex-copy-support";
 import "katex/dist/katex.min.css";
 import "./globals.css";
 import "./editorial.css";
@@ -33,7 +34,10 @@ export default function RootLayout({
       className={`${notoSans.variable} ${inter.variable}`}
       data-scroll-behavior="smooth"
     >
-      <body>{children}</body>
+      <body>
+        <KatexCopySupport />
+        {children}
+      </body>
     </html>
   );
 }

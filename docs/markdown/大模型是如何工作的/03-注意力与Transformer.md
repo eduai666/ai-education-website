@@ -65,7 +65,7 @@ Query 和 Key 匹配得高，只表示“这本书看起来值得多读一些”
 简化计算可写成：
 
 $$
-\operatorname{Attention}(Q,K,V)=\operatorname{softmax}\left(\frac{QK^T}{\sqrt{d_k}}\right)V
+\operatorname{Attention}(Q,K,V)=\operatorname{softmax}\left(\frac{QK^T}{\sqrt{d_{k}}}\right)V
 $$
 
 不用背公式，只要抓住三步：
@@ -74,7 +74,7 @@ $$
 2. softmax 把分数变成权重；
 3. 按权重对 Value 加权汇总。
 
-除以 $\sqrt{d_k}$ 是为了让数值尺度更稳定。
+除以 $\sqrt{d_{k}}$ 是为了让数值尺度更稳定，其中 $d_{k}$ 表示 Key 向量的维度。
 
 > [!NOTE]
 > 如果公式让你觉得突然，可以先只记住“匹配—变成权重—加权汇总”。公式是在精确描述同一件事，不是理解后文的门槛。

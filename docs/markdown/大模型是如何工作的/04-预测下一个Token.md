@@ -11,7 +11,7 @@
 给定前文，模型学习：
 
 $$
-P(t_i\mid t_1,t_2,\ldots,t_{i-1})
+P\!\left(t_{i}\mid t_{1},t_{2},\ldots,t_{i-1}\right)
 $$
 
 意思是：知道前面所有 Token 时，第 $i$ 个 Token 出现的概率。
