@@ -56,7 +56,32 @@ export function OnThisPage({ sections }: OnThisPageProps) {
               className={activeId === section.id ? "is-active" : undefined}
               href={`#${section.id}`}
               aria-current={activeId === section.id ? "location" : undefined}
-              onClick={() => setActiveId(section.id)}
+              onClick={(event) => {
+                setActiveId(section.id);
+                const mobileMenu = event.currentTarget.closest("details");
+
+                if (!mobileMenu) return;
+
+                mobileMenu.removeAttribute("open");
+                const targetHeading = document.getElementById(section.id);
+
+                if (!targetHeading) return;
+
+                const hadTabIndex = targetHeading.hasAttribute("tabindex");
+
+                window.requestAnimationFrame(() => {
+                  if (!hadTabIndex) targetHeading.tabIndex = -1;
+                  targetHeading.focus({ preventScroll: true });
+
+                  if (!hadTabIndex) {
+                    targetHeading.addEventListener(
+                      "blur",
+                      () => targetHeading.removeAttribute("tabindex"),
+                      { once: true },
+                    );
+                  }
+                });
+              }}
             >
               {section.label}
             </a>

@@ -1,4 +1,6 @@
 import type { MDXComponents } from "mdx/types";
+import { CourseFigure } from "@/components/content/course-figure";
+import { AnswerReveal } from "@/components/content/lesson-blocks";
 import {
   Children,
   cloneElement,
@@ -137,7 +139,8 @@ export function useMDXComponents(components: MDXComponents): MDXComponents {
   return {
     a: MarkdownLink,
     blockquote: MarkdownBlockquote,
-    table: MarkdownTable,
+    AnswerReveal,
+    CourseFigure,
     ...components,
   };
 }

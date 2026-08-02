@@ -116,6 +116,23 @@ export function ReflectionPrompt({ children, title }: { children: ReactNode; tit
   );
 }
 
+type AnswerRevealProps = {
+  children: ReactNode;
+  label?: string;
+};
+
+export function AnswerReveal({
+  children,
+  label = "我已作答，查看参考答案",
+}: AnswerRevealProps) {
+  return (
+    <details className="answer-reveal">
+      <summary>{label}</summary>
+      <div className="answer-reveal-content">{children}</div>
+    </details>
+  );
+}
+
 export function LessonSummary({ items }: { items: string[] }) {
   return (
     <div className="lesson-summary-card">

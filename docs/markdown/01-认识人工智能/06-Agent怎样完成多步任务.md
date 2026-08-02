@@ -1,11 +1,11 @@
+import agentLoopFigure from "./assets/07-agent-loop.png";
+import agentReliabilityFigure from "./assets/08-agent-reliability.png";
+
 # Agent 怎样完成多步任务
 
-先给结论：**Agent 不是一个会自己行动的“超级模型”，而是把模型、工具、任务记录和控制程序组织起来的系统。**
+**Agent 不是一个会自己行动的“超级模型”，而是把模型、工具、任务记录和控制程序组织起来的系统。**
 
 模型提出请求 → 控制程序检查并调用 → 工具执行并返回 → 控制程序记录结果并执行停止或确认规则。一次工具请求是 Agent 流程中可观察的一步，工具内部仍可能包含多个固定步骤。
-
-> [!NOTE]
-> 这是“认识人工智能”单元的第 6 课。读完大约需要 12—15 分钟。
 
 ## 先看一个完整任务
 
@@ -117,6 +117,12 @@ LLM 是其中的模型，Agent 是围绕任务搭起来的整个系统。把 Age
 
 相近的循环也常用“判断—行动—观察”来描述。有些教程会介绍 **ReAct（Reasoning + Acting）**，强调判断、行动和观察交替进行。它和这里的四步检查表有关，但不必把两者当成完全相同的固定流程。重点仍是 **根据真实结果调整下一步**。
 
+<CourseFigure
+  src={agentLoopFigure}
+  alt="Agent 围绕目标反复观察、判断、行动和检查，并连接模型、任务记录、工具与人工确认"
+  caption="Agent 不是单独一个模型，而是围绕目标运转的一套任务系统。"
+/>
+
 ### 检查不是一句“我检查过了”
 
 可靠的检查要有外部标准：把结果和目标、限制、工具状态、可靠来源或测试结果逐项比较。
@@ -149,6 +155,12 @@ LLM 是其中的模型，Agent 是围绕任务搭起来的整个系统。把 Age
 多步任务里，前面一个小错误可能让后面越走越偏。模型可以提出“应该停止”，但步数、时间、费用、重试次数和高风险动作的硬上限，应由控制程序强制执行。停止条件不是妨碍 Agent 工作，而是保证它还能被人控制。
 
 实际限制要尽量能数出来。例如，某个具体系统可以设定“最多 12 步、同一工具最多重试 2 次、最多运行 5 分钟”。这些数字只是写法示例，不是适用于所有任务的通用安全值。如果网页状态含糊、按钮作用看不懂，也应该停止，而不是继续乱点。
+
+<CourseFigure
+  src={agentReliabilityFigure}
+  alt="行动前设置最小权限、参数检查、次数限制和人工确认，行动后进行来源核对、测试、日志记录和人工复核"
+  caption="可靠性既靠行动前的约束，也靠行动后的反馈和复核。"
+/>
 
 ## Agent 和固定工作流各有用处
 
@@ -190,9 +202,9 @@ Agent 更适合步骤无法完全预先写死、需要多次使用工具，并�
 
 ## 参考资料
 
-- [Hugging Face Agents Course：What is an Agent?](https://huggingface.co/learn/agents-course/en/unit1/what-are-agents)——用于核对 Agent 的定义、行动能力和任务范围。
-- [Hugging Face Agents Course：Agent steps and structure](https://huggingface.co/learn/agents-course/en/unit1/agent-steps-and-structure)——用于核对多步任务的行动与观察循环。
+- [What is an Agent? — Hugging Face Agents Course](https://huggingface.co/learn/agents-course/en/unit1/what-are-agents)——用于核对 Agent 的定义、行动能力和任务范围。
+- [Understanding AI Agents through the Thought-Action-Observation Cycle — Hugging Face Agents Course](https://huggingface.co/learn/agents-course/en/unit1/agent-steps-and-structure)——用于核对多步任务的行动与观察循环。
 - [Labuladong：LLM 和 Agent 的核心术语和原理](https://labuladong.online/zh/ai-coding/basics/llm-and-agent/)——作为 LLM、工具与 Agent 关系的组织参考。
-- [Microsoft AI Agents for Beginners：Introduction to AI Agents](https://github.com/microsoft/ai-agents-for-beginners/tree/main/01-intro-to-ai-agents)——用于核对 Agent 的组成、适用任务和行动边界。
-- [Microsoft AI Agents for Beginners：Planning Design](https://github.com/microsoft/ai-agents-for-beginners/tree/main/07-planning-design)——用于核对目标拆分、任务清单和迭代规划。
-- [Microsoft AI Agents for Beginners：Building Computer Use Agents](https://github.com/microsoft/ai-agents-for-beginners/tree/main/15-browser-use)——用于核对观察与行动分离、停止条件和人工确认边界。
+- [Introduction to AI Agents and Agent Use Cases — Microsoft AI Agents for Beginners](https://github.com/microsoft/ai-agents-for-beginners/tree/main/01-intro-to-ai-agents)——用于核对 Agent 的组成、适用任务和行动边界。
+- [Planning Design — Microsoft AI Agents for Beginners](https://github.com/microsoft/ai-agents-for-beginners/tree/main/07-planning-design)——用于核对目标拆分、任务清单和迭代规划。
+- [Building Computer Use Agents (CUA) — Microsoft AI Agents for Beginners](https://github.com/microsoft/ai-agents-for-beginners/tree/main/15-browser-use)——用于核对观察与行动分离、停止条件和人工确认边界。

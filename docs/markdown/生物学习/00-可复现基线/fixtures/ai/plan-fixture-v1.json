@@ -1,0 +1,57 @@
+{
+  "schemaVersion": "cell-ai-fixture.schema.v1",
+  "fixtureId": "BIO-G3-PLAN-001",
+  "demoVersion": "bio-cell-demo-v0.3",
+  "requirementsVersion": "requirements-v1",
+  "factsVersion": "facts-v1",
+  "source": "synthetic-offline-fixture",
+  "reviewStatus": "implementation-example",
+  "encoding": "UTF-8",
+  "lineEndings": "LF",
+  "model": {
+    "provider": "offline-teaching-fixture",
+    "modelId": "not-applicable",
+    "generatedAt": "2026-07-31",
+    "parameters": {}
+  },
+  "messages": [
+    {
+      "role": "system",
+      "content": "你是课堂项目助手。只能基于给定事实提出候选方案，并明确不确定项。"
+    },
+    {
+      "role": "user",
+      "content": "为10—14岁学生规划一个只包含细胞膜、细胞核和线粒体的细胞探索器。2D内容必须独立完整，3D由学生主动启动，不使用境外运行时资源。"
+    },
+    {
+      "role": "assistant",
+      "content": "可以先做三张事实卡，再增加按需加载的3D。候选建议：扩大到全部细胞器、先核验事实来源、默认自动旋转模型。请由学生和教师逐项决定。"
+    }
+  ],
+  "parsed": {
+    "summary": "先保证三张经过核验的2D知识卡可独立学习，再把轻量3D作为可关闭的增强层。",
+    "suggestions": [
+      {
+        "id": "SUG-001",
+        "text": "第一版同时加入全部常见细胞器，让内容更丰富。",
+        "referenceDecision": "reject",
+        "decisionLabel": "拒绝",
+        "reason": "这会超出三个结构的固定范围，也会增加内容核验和性能成本。"
+      },
+      {
+        "id": "SUG-002",
+        "text": "知识卡进入页面前，先与教师批准的教材或科研机构资料核对。",
+        "referenceDecision": "accept",
+        "decisionLabel": "采用",
+        "reason": "AI 不是事实来源；先核验可以避免把流畅但错误的文字放进模型。"
+      },
+      {
+        "id": "SUG-003",
+        "text": "页面打开后让3D模型持续自动旋转，吸引学生注意。",
+        "referenceDecision": "modify",
+        "decisionLabel": "修改后采用",
+        "reason": "改为学生主动拖动；不自动旋转，尊重减少动态效果偏好并降低持续渲染开销。"
+      }
+    ]
+  }
+}

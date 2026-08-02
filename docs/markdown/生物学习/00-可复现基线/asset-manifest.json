@@ -1,0 +1,247 @@
+{
+  "schemaVersion": "cell-asset-manifest.v1",
+  "demoVersion": "bio-cell-demo-v0.3",
+  "manifestVersion": "2026-08-01.1",
+  "status": "implementation-baseline",
+  "hashAlgorithm": "sha256",
+  "hashEncoding": "lowercase-hex",
+  "pathBase": "repository-root",
+  "bytePolicy": "raw-file-bytes",
+  "scope": "Cell-feature-specific visualization assets only. Shared site-shell assets such as the brand logo, favicon, and global font remain repository-level release responsibilities and are not claimed as audited here.",
+  "runtimeAssetPolicy": {
+    "networkFetchedVisualizationAssets": false,
+    "externalModels": [
+      {
+        "path": "public/models/cell-architecture-studio/animal-cell-nih.glb",
+        "runtimeUrl": "/models/cell-architecture-studio/animal-cell-nih.glb",
+        "byteSize": 1526232,
+        "mime": "model/gltf-binary",
+        "sha256": "416b95d454e4243a49a530e7e9e4447d33c543e838d072ae5128c38bdad7d7c6"
+      },
+      {
+        "path": "public/models/cell-architecture-studio/neuron-nih.glb",
+        "runtimeUrl": "/models/cell-architecture-studio/neuron-nih.glb",
+        "byteSize": 2885524,
+        "mime": "model/gltf-binary",
+        "sha256": "d979bca2c94eb7b78de51bf68642ba00bf0b21d38d31161348f033c2a893a4a4"
+      },
+      {
+        "path": "public/models/cell-architecture-studio/bacteria-wall-nih.glb",
+        "runtimeUrl": "/models/cell-architecture-studio/bacteria-wall-nih.glb",
+        "byteSize": 482424,
+        "mime": "model/gltf-binary",
+        "sha256": "8c25bccaf828353ced1849483f9701266b43ae6f51899f6f6a3c45bfc7bede57"
+      }
+    ],
+    "externalTextures": [],
+    "externalFonts": [],
+    "externalDecoders": [],
+    "remoteRuntimeUrls": [],
+    "note": "Source citations may link to external reading, but the static previews and interactive 3D visualizations do not fetch those pages or any remote asset during the learning flow. Each specimen first shows a local, versioned 3D front-preview PNG with project-authored inline SVG available as a visual fallback. In the standard learning flow, the three fixed GLBs are served from this application's own public directory only after explicit user action, while plant and muscle 3D are generated locally from deterministic geometry. A separately gated local-development preview may read ignored reference GLBs and a plant front-preview PNG from .local-assets; those local-only inputs are not release assets."
+  },
+  "generatedVisuals": [
+    {
+      "id": "cell-2d-diagram-v1",
+      "kind": "five-svg-fallbacks-and-front-preview-annotation-overlays",
+      "source": {
+        "path": "src/features/cell-architecture/cell-diagram.tsx",
+        "byteSize": 23264,
+        "mime": "application/typescript",
+        "sha256": "9332a4326728627df850458019ce24e50925fd239d7785b1609b8bf4d14e734e"
+      },
+      "configuration": {
+        "path": "src/features/cell-architecture/cell-architecture.module.css",
+        "byteSize": 57015,
+        "mime": "text/css",
+        "sha256": "5de61328a59583fc3beeb6e5891b844b74218a02c055575b549b4e0ebecabb4a"
+      },
+      "outputFiles": [],
+      "provenance": "Project-authored SVG fallback diagrams plus responsive labels and selected-structure overlays. The overlays sit above the locally served PNG records in cell-3d-front-preview-v1; no remote visual is requested by this component.",
+      "licenseNote": "The SVG fallback and annotation code are project-authored. The static model-derived PNGs shown beneath the overlays have their own provenance and license notes in cell-3d-front-preview-v1."
+    },
+    {
+      "id": "cell-3d-scene-v3",
+      "kind": "three-local-glbs-plus-two-programmatic-models",
+      "source": {
+        "path": "public/models/cell-architecture-studio/animal-cell-nih.glb",
+        "byteSize": 1526232,
+        "mime": "model/gltf-binary",
+        "sha256": "416b95d454e4243a49a530e7e9e4447d33c543e838d072ae5128c38bdad7d7c6"
+      },
+      "configuration": {
+        "path": "src/features/cell-architecture/cell-three-model.ts",
+      "byteSize": 21533,
+        "mime": "application/typescript",
+      "sha256": "96f54c7bd5a0259eda7004577c39be053741606ed78304b685a7e0379842fcdc"
+      },
+      "fixedSeed": "CELL-DEMO-20260731",
+      "outputFiles": [],
+    "provenance": "Three GLBs were copied byte-for-byte from Cell Architecture Studio commit 1cab982e7a0f96af854a696430c0724707764358: NIH 3D animal cell entry 3DPX-015797 version 2, neuron entry 3DPX-015796 version 2, and Gram-positive cell-wall entry 3DPX-010752 version 2. Runtime code recomputes missing normals, applies local studio materials, and adds project-authored semantic hotspots only to the animal-cell teaching view. Plant geometry proportions and placements are a native-Three.js adaptation of the same commit's MIT-licensed PlantModel; muscle geometry is project-authored. An optional development-only route can preview separately ignored plant and muscle reference GLBs from .local-assets when CELL_LOCAL_REFERENCE_MODELS=1; they are not default runtime assets or distributable project assets.",
+    "licenseNote": "NIH 3D entries 3DPX-015797 version 2 and 3DPX-015796 version 2 display CC BY-NC-SA 4.0. Entry 3DPX-010752 version 2 is marked Public Domain and links to CC0 1.0. Cell Architecture Studio code is MIT-licensed, Copyright (c) 2026 cclank; its PlantModel code adaptation remains attributed here. The ignored local plant and muscle preview GLBs need their own distribution authorization and must not be committed or published."
+    },
+    {
+      "id": "cell-3d-front-preview-v1",
+      "kind": "five-fixed-camera-3d-front-preview-pngs",
+      "source": {
+        "path": "scripts/render-cell-front-previews.mjs",
+        "byteSize": 3562,
+        "mime": "application/javascript",
+        "sha256": "834f1f9926422aea3368e497f7c40703dc000c780e20d444920569ec89450d2f"
+      },
+      "configuration": {
+        "path": "src/features/cell-architecture/cell-model-catalog.ts",
+        "byteSize": 8614,
+        "mime": "application/typescript",
+        "sha256": "6004677bff1898d1baa570670f48a8af0ad6454d183d607316cf79c9045b4944"
+      },
+      "capture": {
+        "route": "/projects/learn/cell-architecture",
+        "server": "production-mode loopback page at http://127.0.0.1:3101",
+        "browser": "Playwright Chromium",
+        "viewport": {
+          "width": 1440,
+          "height": 1000,
+          "deviceScaleFactor": 1
+        },
+        "sceneCamera": "Release-build serialized default camera and per-model transforms; no rotate or zoom gesture is sent before capture, and OrbitControls auto-rotation is disabled.",
+        "readiness": "Wait for network idle, click the specimen and its explicit 3D-start button, verify the published GLB/procedural source, then wait 120 ms before capture. For the animal cell only, click canvas coordinate (8, 8), outside the semantic hotspots, and wait for data-selected-structure=none so the default teaching-selection halo is not baked into the image.",
+        "localReferenceModels": "disabled",
+        "visualTreatment": "Hide the interactive scene badge and decorative stage line; set the stage to #e9f0ef; apply brightness(0.72), contrast(1.34), and saturate(1.75) to the canvas.",
+        "outputCanvas": {
+          "width": 704,
+          "height": 521
+        }
+      },
+      "outputFiles": [
+        {
+          "modelId": "animal-cell",
+          "path": "public/cell-architecture/front-previews/animal-cell-front-v1.png",
+          "runtimeUrl": "/cell-architecture/front-previews/animal-cell-front-v1.png",
+          "byteSize": 250134,
+          "mime": "image/png",
+          "sha256": "e8ca7bd6b5c9ae2cf900043f2d59a0599cc5817c4f0401de8ddb65f28662672e"
+        },
+        {
+          "modelId": "plant-cell",
+          "path": "public/cell-architecture/front-previews/plant-cell-front-v1.png",
+          "runtimeUrl": "/cell-architecture/front-previews/plant-cell-front-v1.png",
+          "byteSize": 92971,
+          "mime": "image/png",
+          "sha256": "e5ef97ff041f86f97154fb331bec4bafe1aea84e5cf5bb3ad64c21a778098141"
+        },
+        {
+          "modelId": "muscle-cell",
+          "path": "public/cell-architecture/front-previews/muscle-cell-front-v1.png",
+          "runtimeUrl": "/cell-architecture/front-previews/muscle-cell-front-v1.png",
+          "byteSize": 96634,
+          "mime": "image/png",
+          "sha256": "56a11a357ec16a2551f7b74eeb1895c1877fe1aff543e6b797a9199c0e56c9e7"
+        },
+        {
+          "modelId": "neuron",
+          "path": "public/cell-architecture/front-previews/neuron-front-v1.png",
+          "runtimeUrl": "/cell-architecture/front-previews/neuron-front-v1.png",
+          "byteSize": 31083,
+          "mime": "image/png",
+          "sha256": "b15c14ad3f31d29c0e0784f71c7dbfab248ded43bf55ea066d3a99b0740953ef"
+        },
+        {
+          "modelId": "bacteria-wall",
+          "path": "public/cell-architecture/front-previews/bacteria-wall-front-v1.png",
+          "runtimeUrl": "/cell-architecture/front-previews/bacteria-wall-front-v1.png",
+          "byteSize": 197903,
+          "mime": "image/png",
+          "sha256": "3f6a6ee6e58cf9d42b9a6256af7acf0c45abd49da6310d9e820d183d525a3440"
+        }
+      ],
+      "provenance": "The renderer captures the canvas from a locally served published scene only. It rejects non-loopback hosts, requires local reference models to be disabled, verifies GLB versus procedural source for every specimen, and writes raw PNG screenshot bytes without importing any reference-site image.",
+      "licenseNote": "Animal-cell and neuron PNGs are rendered adaptations of NIH 3D entries 3DPX-015797 version 2 and 3DPX-015796 version 2 (CC BY-NC-SA 4.0); their page attribution must retain the license link and state that the view, materials, and screenshot treatment were modified. The bacteria-wall PNG derives from the CC0/Public Domain NIH entry 3DPX-010752 version 2; retain the source credit. The plant PNG is from the project's procedural model, whose proportions retain Cell Architecture Studio PlantModel MIT attribution; the muscle PNG is project-authored procedural geometry. Ignored Tripo reference GLBs are never used to generate these release files."
+    }
+  ],
+  "thirdPartyCode": [
+    {
+      "package": "three",
+      "version": "0.185.1",
+      "license": "MIT",
+      "purpose": "Browser-side GLB loading, material adaptation, and demand rendering",
+      "versionEvidence": "package-lock.json"
+    },
+    {
+      "package": "cell-architecture-studio",
+      "version": "1cab982e7a0f96af854a696430c0724707764358",
+      "license": "MIT",
+      "copyright": "Copyright (c) 2026 cclank",
+      "purpose": "Fixed GLB source, interaction reference, and MIT-licensed PlantModel geometry reference",
+      "versionEvidence": "https://github.com/cclank/cell-architecture-studio/tree/1cab982e7a0f96af854a696430c0724707764358"
+    }
+  ],
+  "thirdPartyAssets": [
+    {
+      "id": "nih-3d-animal-cell-3dpx-015797-v2",
+      "localPath": "public/models/cell-architecture-studio/animal-cell-nih.glb",
+      "sourceFile": "https://github.com/cclank/cell-architecture-studio/blob/1cab982e7a0f96af854a696430c0724707764358/public/models/animal-cell-nih.glb",
+      "originalEntry": "https://3d.nih.gov/entries/3DPX-015797/2",
+      "license": "CC BY-NC-SA 4.0",
+      "byteSize": 1526232,
+      "sha256": "416b95d454e4243a49a530e7e9e4447d33c543e838d072ae5128c38bdad7d7c6",
+      "geometry": {
+        "meshes": 1,
+        "vertices": 42168,
+        "triangles": 84906,
+        "materials": 0,
+        "textures": 0,
+        "animations": 0
+      }
+    },
+    {
+      "id": "nih-3d-neuron-3dpx-015796-v2",
+      "localPath": "public/models/cell-architecture-studio/neuron-nih.glb",
+      "sourceFile": "https://github.com/cclank/cell-architecture-studio/blob/1cab982e7a0f96af854a696430c0724707764358/public/models/neuron-nih.glb",
+      "originalEntry": "https://3d.nih.gov/entries/3DPX-015796/2",
+      "license": "CC BY-NC-SA 4.0",
+      "byteSize": 2885524,
+      "sha256": "d979bca2c94eb7b78de51bf68642ba00bf0b21d38d31161348f033c2a893a4a4",
+      "geometry": {
+        "meshes": 1,
+        "vertices": 80130,
+        "triangles": 160256,
+        "materials": 0,
+        "textures": 0,
+        "animations": 0
+      }
+    },
+    {
+      "id": "nih-3d-gram-positive-cell-wall-3dpx-010752-v2",
+      "localPath": "public/models/cell-architecture-studio/bacteria-wall-nih.glb",
+      "sourceFile": "https://github.com/cclank/cell-architecture-studio/blob/1cab982e7a0f96af854a696430c0724707764358/public/models/bacteria-wall-nih.glb",
+      "originalEntry": "https://3d.nih.gov/entries/3DPX-010752/2",
+      "license": "CC0 1.0",
+      "byteSize": 482424,
+      "sha256": "8c25bccaf828353ced1849483f9701266b43ae6f51899f6f6a3c45bfc7bede57",
+      "geometry": {
+        "meshes": 1,
+        "vertices": 14572,
+        "triangles": 25542,
+        "materials": 0,
+        "textures": 0,
+        "animations": 0
+      }
+    }
+  ],
+  "budgets": {
+    "maximumTriangles": 170000,
+    "maximumDrawCalls": 12,
+    "maximumModelBytes": 3000000,
+    "maximumTextureEdgePixels": 1024,
+    "maximumCanvasCount": 1,
+    "initialDpr": 1,
+    "fallbackDpr": 0.75
+  },
+  "performanceEvidence": {
+    "testId": "PERF-001",
+    "status": "pending-versioned-browser-and-device-run",
+    "automatedBaseline": "The browser test reads renderer statistics, but no result is recorded in this manifest.",
+    "manualEvidenceRequired": "A named real device, exact browser, viewport, DPR, WebGL renderer, cold and warm runs, and the raw report must be saved under 03-测试与复现/runs/.",
+    "lowEndDeviceClaim": "pending-manual-real-device-test"
+  }
+}

@@ -1,12 +1,14 @@
 import Link from "next/link";
 import {
-  navigationGroups,
+  getNavigationSection,
   type NavigationIconName,
   type NavigationItem,
+  type NavigationSectionId,
 } from "@/config/routes";
 
 type SiteNavigationProps = {
   activePath: string;
+  sectionId: NavigationSectionId;
 };
 
 function NavigationIcon({ name }: { name: NavigationIconName }) {
@@ -47,7 +49,17 @@ function NavigationLeaf({
 }) {
   const isCurrent = item.href === activePath;
 
-  if (!item.href) return null;
+  if (!item.href) {
+    return (
+      <span className="navigation-link is-disabled" aria-disabled="true">
+        <span className="navigation-link-content">
+          {isNestedLesson ? <NavigationLeafIcon /> : null}
+          <span>{item.label}</span>
+        </span>
+        {item.status ? <span className="navigation-status">{item.status}</span> : null}
+      </span>
+    );
+  }
 
   return (
     <Link
@@ -59,9 +71,14 @@ function NavigationLeaf({
         {isNestedLesson ? <NavigationLeafIcon /> : null}
         <span>{item.label}</span>
       </span>
-      {item.status ? <span className="navigation-status">待更新</span> : null}
+      {item.status ? <span className="navigation-status">{item.status}</span> : null}
     </Link>
   );
+}
+
+function containsActivePath(item: NavigationItem, activePath: string): boolean {
+  if (item.href === activePath) return true;
+  return item.children?.some((child) => containsActivePath(child, activePath)) ?? false;
 }
 
 function NavigationEntry({
@@ -81,7 +98,7 @@ function NavigationEntry({
     );
   }
 
-  const containsCurrentPage = item.children.some((child) => child.href === activePath);
+  const containsCurrentPage = item.children.some((child) => containsActivePath(child, activePath));
 
   return (
     <li className={`navigation-branch${containsCurrentPage ? " is-current-branch" : ""}`}>
@@ -107,10 +124,12 @@ function NavigationEntry({
   );
 }
 
-export function SiteNavigation({ activePath }: SiteNavigationProps) {
+export function SiteNavigation({ activePath, sectionId }: SiteNavigationProps) {
+  const section = getNavigationSection(sectionId);
+
   return (
-    <nav className="site-navigation" aria-label="全站导航">
-      {navigationGroups.map((group) => (
+    <nav className="site-navigation" aria-label={`${section.label}目录`}>
+      {section.groups.map((group) => (
         <section className="navigation-group" key={group.title}>
           <h2><NavigationIcon name={group.icon} />{group.title}</h2>
           <ul>

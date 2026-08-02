@@ -12,6 +12,8 @@
 
 # testing
 /coverage
+/playwright-report/
+/test-results/
 
 # next.js
 /.next/
@@ -23,6 +25,10 @@
 # misc
 .DS_Store
 *.pem
+
+# Local-only third-party binary assets. Keep provenance alongside the cache,
+# but do not commit or deploy these files without their source authorization.
+/.local-assets/
 
 # debug
 npm-debug.log*
