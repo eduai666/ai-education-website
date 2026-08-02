@@ -1950,19 +1950,27 @@ select {
   font-family: inherit;
 }
 
-.markdown-document table {
-  display: block;
+.markdown-table-scroll {
   width: 100%;
   margin: 28px 0;
   overflow-x: auto;
   border: 1px solid #dce4ee;
   border-radius: 12px;
+  background: white;
+  scrollbar-width: thin;
+}
+
+.markdown-document table {
+  display: table;
+  width: 100%;
+  min-width: 100%;
+  margin: 0;
+  border: 0;
   border-collapse: separate;
   border-spacing: 0;
-  background: white;
+  background: transparent;
   font-size: 13px;
   line-height: 1.7;
-  scrollbar-width: thin;
 }
 
 .markdown-document thead {

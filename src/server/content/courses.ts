@@ -1,4 +1,3 @@
-import type { ComponentType } from "react";
 import WhatIsAiLesson from "../../../content/courses/01-ai-basics/01-what-is-ai.mdx";
 import AiAroundUs from "../../../docs/markdown/01-认识人工智能/01-人工智能就在我们身边.md";
 import HowAiLearnsAndResponds from "../../../docs/markdown/01-认识人工智能/02-AI系统怎样学习和给出结果.md";
@@ -14,27 +13,11 @@ import HowAgentsActStepByStep from "../../../docs/markdown/04-什么是智能体
 import AgentTaskWalkthrough from "../../../docs/markdown/04-什么是智能体/04-跟着智能体完成一次任务.md";
 import AgentsVsFixedWorkflows from "../../../docs/markdown/04-什么是智能体/05-智能体和固定工作流有什么不同.md";
 import WhenAgentsShouldStop from "../../../docs/markdown/04-什么是智能体/06-什么时候应该让智能体停下来.md";
+import type { LessonEntry } from "./course-types";
+import { largeModelLessons } from "./large-model-lessons";
+import { machineLearningLessons } from "./machine-learning-lessons";
 
-export type LessonSection = {
-  id: string;
-  label: string;
-};
-
-export type LessonMeta = {
-  chapter: string;
-  slug: string;
-  contentKind?: "markdown";
-  chapterLabel: string;
-  title: string;
-  description: string;
-  audience: string;
-  readingTime: string;
-  sections: LessonSection[];
-};
-
-export type LessonEntry = LessonMeta & {
-  Content: ComponentType;
-};
+export type { LessonEntry, LessonMeta, LessonSection } from "./course-types";
 
 export const courseLessons: LessonEntry[] = [
   {
@@ -213,6 +196,8 @@ export const courseLessons: LessonEntry[] = [
     ],
     Content: SafeAiUseAndHumanResponsibility,
   },
+  ...machineLearningLessons,
+  ...largeModelLessons,
   {
     chapter: "agents",
     slug: "introduction",

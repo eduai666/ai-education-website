@@ -1401,10 +1401,14 @@ select {
   --alert-background: var(--accent-soft);
 }
 
-.markdown-document table {
+.markdown-table-scroll {
   border-color: var(--border);
   border-radius: 4px;
   background: var(--background);
+}
+
+.markdown-document table {
+  background: transparent;
   font-size: 13px;
 }
 
@@ -1438,6 +1442,33 @@ select {
   border-radius: 3px;
   background: var(--surface-strong);
   color: var(--primary-hover);
+}
+
+/* Mathematical notation rendered from Markdown by KaTeX. */
+
+.markdown-document .katex {
+  color: var(--text-strong);
+  font-size: 1.06em;
+  line-height: 1.4;
+}
+
+.markdown-document .katex-display {
+  margin: 28px 0;
+  padding: 20px 24px;
+  overflow-x: auto;
+  overflow-y: hidden;
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--primary);
+  border-radius: 4px;
+  background: var(--surface);
+  scrollbar-color: var(--border-strong) transparent;
+  scrollbar-width: thin;
+}
+
+.markdown-document .katex-display > .katex {
+  display: inline-block;
+  min-width: max-content;
+  text-align: initial;
 }
 
 .markdown-document img {
