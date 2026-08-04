@@ -65,8 +65,6 @@ export const navigationSections: NavigationSection[] = [
               { label: "安全使用 AI 与人的责任", href: "/courses/ai-basics/responsible-ai-use" },
               { label: "怎样选择 AI 编程工具", href: "/courses/ai-basics/choosing-ai-coding-tools" },
               { label: "CLI 和桌面客户端有什么不同", href: "/courses/ai-basics/cli-vs-desktop-clients" },
-              { label: "Claude Code 桌面版接入 API", href: "/courses/ai-basics/claude-code-desktop-api" },
-              { label: "Codex 桌面版接入 API", href: "/courses/ai-basics/codex-desktop-api" },
             ],
           },
           {
@@ -112,7 +110,13 @@ export const navigationSections: NavigationSection[] = [
               { label: "什么时候应该让智能体停下来", href: "/courses/agents/when-agents-should-stop" },
             ],
           },
-          { label: "第五单元 · 安全使用 AI", status: "即将推出" },
+          {
+            label: "第五单元 · 如何将大模型接入到智能体",
+            children: [
+              { label: "Claude Code 桌面版接入 API", href: "/courses/model-to-agent/claude-code-desktop-api" },
+              { label: "Codex 桌面版接入 API", href: "/courses/model-to-agent/codex-desktop-api" },
+            ],
+          },
         ],
       },
     ],

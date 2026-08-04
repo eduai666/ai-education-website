@@ -232,7 +232,8 @@ export const courseLessons: LessonEntry[] = [
     Content: CliVsDesktopClients,
   },
   {
-    chapter: "ai-basics",
+    chapter: "model-to-agent",
+    chapterLabel: "如何将大模型接入到智能体 · 第 1 课",
     slug: "claude-code-desktop-api",
     contentKind: "markdown",
     title: "Windows Claude Desktop 接入 DeepSeek API",
@@ -255,7 +256,8 @@ export const courseLessons: LessonEntry[] = [
     Content: ClaudeCodeDesktopApi,
   },
   {
-    chapter: "ai-basics",
+    chapter: "model-to-agent",
+    chapterLabel: "如何将大模型接入到智能体 · 第 2 课",
     slug: "codex-desktop-api",
     contentKind: "markdown",
     title: "Windows 桌面版 Codex 怎样接入 API",
@@ -436,10 +438,14 @@ export function getLesson(chapter: string, slug: string) {
 }
 
 export function getAdjacentLessons(currentLesson: LessonEntry) {
-  const index = courseLessons.findIndex((lesson) => lesson === currentLesson);
+  const chapterOrder = ["ai-basics", "machine-learning", "large-models", "agents", "model-to-agent"];
+  const orderedLessons = chapterOrder.flatMap((chapter) =>
+    courseLessons.filter((lesson) => lesson.chapter === chapter),
+  );
+  const index = orderedLessons.findIndex((lesson) => lesson === currentLesson);
 
   return {
-    previous: index > 0 ? courseLessons[index - 1] : undefined,
-    next: index < courseLessons.length - 1 ? courseLessons[index + 1] : undefined,
+    previous: index > 0 ? orderedLessons[index - 1] : undefined,
+    next: index < orderedLessons.length - 1 ? orderedLessons[index + 1] : undefined,
   };
 }
