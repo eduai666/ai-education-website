@@ -115,6 +115,7 @@ export const navigationSections: NavigationSection[] = [
             children: [
               { label: "Claude Code 桌面版接入 API", href: "/courses/model-to-agent/claude-code-desktop-api" },
               { label: "Codex 桌面版接入 API", href: "/courses/model-to-agent/codex-desktop-api" },
+              { label: "WorkBuddy 桌面版接入 API", href: "/courses/model-to-agent/workbuddy-desktop-api" },
             ],
           },
         ],

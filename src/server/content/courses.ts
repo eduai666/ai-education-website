@@ -10,6 +10,7 @@ import ChoosingAiCodingTools from "../../../docs/markdown/01-认识人工智能/
 import CliVsDesktopClients from "../../../docs/markdown/01-认识人工智能/09-CLI和桌面客户端有什么不同.md";
 import ClaudeCodeDesktopApi from "../../../docs/markdown/01-认识人工智能/10-Windows桌面版ClaudeCode接入API.md";
 import CodexDesktopApi from "../../../docs/markdown/01-认识人工智能/11-Windows桌面版Codex接入API.md";
+import WorkBuddyDesktopApi from "../../../docs/markdown/05-如何将大模型接入到智能体/03-Windows桌面版WorkBuddy接入DeepSeekAPI.md";
 import AgentsUnitIntroduction from "../../../docs/markdown/04-什么是智能体/00-单元导读.md";
 import FromAnswersToTasks from "../../../docs/markdown/04-什么是智能体/01-从回答问题到完成任务.md";
 import AgentComponents from "../../../docs/markdown/04-什么是智能体/02-智能体由什么组成.md";
@@ -280,6 +281,34 @@ export const courseLessons: LessonEntry[] = [
       { id: "参考资料", label: "参考资料" },
     ],
     Content: CodexDesktopApi,
+  },
+  {
+    chapter: "model-to-agent",
+    chapterLabel: "如何将大模型接入到智能体 · 第 3 课",
+    slug: "workbuddy-desktop-api",
+    contentKind: "markdown",
+    title: "Windows 桌面版 WorkBuddy 接入 DeepSeek API",
+    description: "通过 WorkBuddy 图形化模型设置接入 DeepSeek 官方 API，并掌握旧版配置文件兼容方法、低风险验证和常见故障排查。",
+    audience: "适合家长、教师与有监护人陪同的学生",
+    readingTime: "预计学习 25—30 分钟",
+    sections: [
+      { id: "开始前先分清三件事", label: "开始前先分清三件事" },
+      { id: "准备工作", label: "准备工作" },
+      { id: "步骤-1下载并登录-workbuddy", label: "步骤 1：下载并登录 WorkBuddy" },
+      { id: "步骤-2获取-deepseek-api-key", label: "步骤 2：获取 DeepSeek API Key" },
+      { id: "步骤-3打开模型设置", label: "步骤 3：打开模型设置" },
+      { id: "步骤-4选择-deepseek-预设", label: "步骤 4：选择 DeepSeek 预设" },
+      { id: "预设不可用时使用自定义-api", label: "预设不可用时使用自定义 API" },
+      { id: "旧版配置文件兼容方法", label: "旧版配置文件兼容方法" },
+      { id: "步骤-5保存并选择模型", label: "步骤 5：保存并选择模型" },
+      { id: "步骤-6做一次低风险验证", label: "步骤 6：做一次低风险验证" },
+      { id: "常见问题", label: "常见问题" },
+      { id: "安全与费用", label: "安全与费用" },
+      { id: "检查理解", label: "检查理解" },
+      { id: "本课小结", label: "本课小结" },
+      { id: "参考资料", label: "参考资料" },
+    ],
+    Content: WorkBuddyDesktopApi,
   },
   ...machineLearningLessons,
   ...largeModelLessons,
