@@ -22,6 +22,7 @@
 - 学生 AI 学习与创作指南
 - 家长与教师使用指南
 - 教师学科应用案例
+- AI 知识闯关小游戏与 Agent 共创实践教程
 - 细胞结构探索器互动实践项目
 - 个人学习中心与站内搜索
 
@@ -67,6 +68,8 @@ npm run dev
 - 网站首页：<http://127.0.0.1:3000>
 - 机器学习与深度学习：<http://127.0.0.1:3000/courses/machine-learning/introduction>
 - 大模型是如何工作的：<http://127.0.0.1:3000/courses/large-models/introduction>
+- AI 知识闯关小游戏：<http://127.0.0.1:3000/projects/learn/ai-knowledge-challenge>
+- Agent 共创实践教程：<http://127.0.0.1:3000/projects/learn/ai-knowledge-challenge/tutorial>
 - 细胞结构探索器：<http://127.0.0.1:3000/projects/learn/cell-architecture>
 
 开发模式支持热更新。结束运行时，在启动服务的终端中按 `Ctrl+C`。
@@ -90,6 +93,7 @@ npm run start
 | `npm run typecheck` | 检查 TypeScript 类型 |
 | `npm run lint` | 执行 ESLint 检查 |
 | `npm run test:data` | 验证细胞项目数据与可复现资源 |
+| `node --test tests/ai-knowledge-challenge/*.test.mjs` | 验证知识闯关题库、抽题和计分逻辑 |
 | `npm run test:e2e` | 执行 Playwright 端到端测试 |
 | `npm run verify` | 依次执行数据测试、类型检查、代码检查和构建 |
 | `npm run verify:full` | 在 `verify` 基础上追加端到端测试 |
@@ -108,6 +112,7 @@ docs/markdown/
 ├─ 机器学习与深度学习/
 ├─ 大模型是如何工作的/
 ├─ 04-什么是智能体/
+├─ 知识闯关小游戏实践项目/
 └─ 生物学习/
 ```
 

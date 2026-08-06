@@ -125,12 +125,14 @@ export const navigationSections: NavigationSection[] = [
   {
     id: "projects",
     label: "实践项目",
-    href: "/projects/learn/cell-architecture",
+    href: "/projects/learn/ai-knowledge-challenge",
     groups: [
       {
         title: "实践项目",
         icon: "flask",
         items: [
+          { label: "AI 知识闯关小游戏", href: "/projects/learn/ai-knowledge-challenge" },
+          { label: "用 Agent 制作闯关游戏", href: "/projects/learn/ai-knowledge-challenge/tutorial" },
           { label: "细胞结构探索器", href: "/projects/learn/cell-architecture" },
           { label: "AI 创作实验室", status: "即将推出" },
           { label: "AI 学习实验室", status: "即将推出" },

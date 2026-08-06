@@ -35,4 +35,26 @@ export const siteSearchDocuments: SiteSearchDocument[] = [
       { id: "sources", label: "来源与边界" },
     ],
   },
+  {
+    path: "/projects/learn/ai-knowledge-challenge",
+    title: "AI 知识闯关小游戏",
+    description:
+      "通过 12 道均衡随机题复习认识人工智能、机器学习、大模型与智能体，并查看即时解析、单元报告和错题回顾。",
+    sectionLabel: getNavigationSection("projects").label,
+    sections: [{ id: "challenge", label: "开始知识闯关" }],
+  },
+  {
+    path: "/projects/learn/ai-knowledge-challenge/tutorial",
+    title: "用 Agent 制作 AI 知识闯关小游戏",
+    description:
+      "面向学生的 Agent 共创实践教程：拆解任务、编写提示词、逐步验收、测试修复并展示作品。",
+    sectionLabel: getNavigationSection("projects").label,
+    sections: [
+      { id: "写提示词不是背提示词", label: "怎样写提示词" },
+      { id: "第-1-阶段把想法变成项目任务卡", label: "制作任务卡" },
+      { id: "第-3-阶段建立四单元准确题库", label: "建立准确题库" },
+      { id: "第-11-阶段测试描述问题和要求局部修复", label: "测试与修复" },
+      { id: "真实开发复盘第一版记录", label: "真实开发复盘" },
+    ],
+  },
 ];
